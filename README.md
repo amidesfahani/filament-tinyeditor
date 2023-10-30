@@ -86,6 +86,4 @@ This project follow the [Semantic Versioning](https://semver.org/) guidelines.
 
 ## License
 
-Copyright (c) 2022 Adam Weston and contributors
-
 Licensed under the MIT license, see [LICENSE.md](LICENSE.md) for details.
