@@ -26,7 +26,19 @@ return [
             'toolbar' => 'undo redo removeformat | styles | bold italic | rtl ltr | alignjustify alignright aligncenter alignleft | numlist bullist outdent indent accordion | forecolor backcolor | blockquote table toc hr | image link anchor media codesample emoticons | visualblocks print preview wordcount fullscreen help',
             'upload_directory' => null,
         ],
-	]
+	],
+
+    /**
+     * this option will load optional language file based on you app locale
+     * example:
+     * languages => [
+     *      'fa' => 'https://cdn.jsdelivr.net/npm/tinymce-i18n@23.10.9/langs6/fa.min.js',
+     *      'es' => 'https://cdn.jsdelivr.net/npm/tinymce-i18n@23.10.9/langs6/es.min.js',
+     *      'ja' => asset('assets/ja.min.js')
+     * ]
+     */
+
+    'languages' => []
 ];
 
 ?>
