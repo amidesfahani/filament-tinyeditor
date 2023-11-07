@@ -31,6 +31,8 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
     protected bool $removeScriptHost = true;
     protected bool $convertUrls = true;
 
+    protected string|bool $darkMode;
+
     protected string|\Closure $language;
 
     protected function setUp(): void
@@ -38,7 +40,8 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
         parent::setUp();
 
         $this->language = app()->getLocale();
-        $this->direction = config('filament-tinyeditor.direction');
+        $this->direction = config('filament-tinyeditor.direction', 'ltr');
+        $this->darkMode = config('filament-tinyeditor.darkMode', 'auto');
     }
 
     public function getToolbar(): string
@@ -255,6 +258,11 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
         }
 
         return '';
+    }
+
+    public function darkMode(): string|bool
+    {
+        return $this->darkMode;
     }
 
 	public function getMaxHeight(): int
