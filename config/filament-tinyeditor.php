@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'direction' => 'rtl',
+    // 'direction' => 'rtl',
 	'profiles' => [
 		'default' => [
             'plugins' => 'accordion autoresize codesample directionality advlist link image lists preview pagebreak searchreplace wordcount code fullscreen insertdatetime media table emoticons',
