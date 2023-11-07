@@ -38,7 +38,7 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
         parent::setUp();
 
         $this->language = app()->getLocale();
-        $this->direction = config('filament-tinyeditor.direction');
+        $this->direction = config('filament-tinyeditor.direction', 'ltr');
     }
 
     public function getToolbar(): string
