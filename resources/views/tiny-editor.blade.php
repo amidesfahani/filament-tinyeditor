@@ -79,7 +79,6 @@
 						});
 		
 						editor.on('init', function(e) {
-							console.log('ready')
 							if (state != null) {
 							    editor.setContent(state)
 							}
