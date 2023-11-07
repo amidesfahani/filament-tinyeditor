@@ -8,7 +8,7 @@
 	@endphp
 
     <div
-        x-data="{ state: $wire.entangle('{{ $getStatePath() }}'), initialized: false }"
+		x-data="{ state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$getStatePath()}')") }}, initialized: false }"
 		x-load-css="[@js(\Filament\Support\Facades\FilamentAsset::getStyleHref('tiny-css', package: 'amidesfahani/filament-tinyeditor'))]"
         x-load-js="[@js(\Filament\Support\Facades\FilamentAsset::getScriptSrc($getLanguageId(), package: 'amidesfahani/filament-tinyeditor'))]"
         x-init="(() => {
@@ -139,3 +139,15 @@
         @endunless
     </div>
 </x-dynamic-component>
+
+@pushOnce('scripts')
+<script>
+window.addEventListener('beforeunload', (event) => {
+    if (tinymce.activeEditor.isDirty()) {
+        event.preventDefault();
+		// Included for legacy support, e.g. Chrome/Edge < 119
+		event.returnValue = '{{ __("Are you sure you want to leave?") }}';
+    }
+});
+</script>
+@endPushOnce
