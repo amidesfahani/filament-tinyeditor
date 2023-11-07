@@ -2,6 +2,10 @@
 
 return [
     // 'direction' => 'rtl',
+    /**
+     * change darkMode: auto|force|class|media|false
+     */
+    'darkMode' => 'auto',
 	'profiles' => [
 		'default' => [
             'plugins' => 'accordion autoresize codesample directionality advlist link image lists preview pagebreak searchreplace wordcount code fullscreen insertdatetime media table emoticons',

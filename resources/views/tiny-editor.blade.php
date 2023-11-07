@@ -27,8 +27,22 @@
 					max_height: {{ $getMaxHeight() }},
 					min_height: {{ $getMinHeight() }},
 
+					@if($darkMode() == 'media')
 					skin: (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'oxide-dark' : ''),
 					content_css: (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : ''),
+					@elseif($darkMode() == 'class')
+					skin: (document.querySelector('html').getAttribute('class').includes('dark') ? 'oxide-dark' : 'oxide'),
+					content_css: (document.querySelector('html').getAttribute('class').includes('dark') ? 'dark' : 'default'),
+					@elseif($darkMode() == 'force')
+					skin: 'oxide-dark',
+					content_css: 'dark',
+					@elseif($darkMode() == false)
+					skin: 'oxide',
+					content_css: 'default',
+					@else
+					skin: (window.matchMedia('(prefers-color-scheme: dark)').matches || document.querySelector('html').getAttribute('class').includes('dark') ? 'oxide-dark' : 'oxide'),
+					content_css: (window.matchMedia('(prefers-color-scheme: dark)').matches || document.querySelector('html').getAttribute('class').includes('dark') ? 'dark' : 'default'),
+					@endif
 
 					plugins: '{{ $getPlugins() }}',
 		
