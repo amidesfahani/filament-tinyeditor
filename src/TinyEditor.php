@@ -31,6 +31,8 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
     protected bool $removeScriptHost = true;
     protected bool $convertUrls = true;
 
+    protected string $templates = '';
+
     protected string|bool $darkMode;
 
     protected string|\Closure $language;
@@ -46,28 +48,41 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
 
     public function getToolbar(): string
     {
+        $toolbar = 'undo redo removeformat | styles | bold italic | rtl ltr | alignjustify alignright aligncenter alignleft | numlist bullist outdent indent accordion | forecolor backcolor | blockquote table toc hr | image link anchor media codesample emoticons | visualblocks print preview wordcount fullscreen help';
         if ($this->isSimple()) {
-            return 'removeformat | bold italic | rtl ltr | link emoticons';
+            $toolbar = 'removeformat | bold italic | rtl ltr | link emoticons';
         }
 
         if (config('filament-tinyeditor.profiles.'.$this->profile.'.toolbar')) {
-            return config('filament-tinyeditor.profiles.'.$this->profile.'.toolbar');
+            $toolbar = config('filament-tinyeditor.profiles.'.$this->profile.'.toolbar');
         }
 
-        return 'undo redo removeformat | styles | bold italic | rtl ltr | alignjustify alignright aligncenter alignleft | numlist bullist outdent indent accordion | forecolor backcolor | blockquote table toc hr | image link anchor media codesample emoticons | visualblocks print preview wordcount fullscreen help';
+        if (!Str::contains($this->templates, 'template'))
+        {
+            $toolbar .= ' template';
+        }
+
+        return $toolbar;
     }
 
     public function getPlugins(): string
     {
+        $plugins = 'accordion autoresize codesample directionality advlist autolink link image lists charmap preview anchor pagebreak searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media table emoticons template help';
+
         if ($this->isSimple()) {
-            return 'autoresize directionality emoticons link wordcount';
+            $plugins = 'autoresize directionality emoticons link wordcount';
         }
 
         if (config('filament-tinyeditor.profiles.'.$this->profile.'.plugins')) {
-            return config('filament-tinyeditor.profiles.'.$this->profile.'.plugins');
+            $plugins = config('filament-tinyeditor.profiles.'.$this->profile.'.plugins');
         }
 
-        return 'accordion autoresize codesample directionality advlist autolink link image lists charmap preview anchor pagebreak searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media table emoticons template help';
+        if (!Str::contains($this->templates, 'template'))
+        {
+            $plugins .= ' template';
+        }
+
+        return $plugins;
     }
 
     public function isSimple(): bool
@@ -78,6 +93,18 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
     public function getFileAttachmentsDirectory(): ?string
     {
         return filled($directory = $this->evaluate($this->fileAttachmentsDirectory)) ? $directory : config('filament-tinyeditor.profiles.'.$this->profile.'.upload_directory');
+    }
+
+    public function templates(string $templates): static
+    {
+        $this->templates = addslashes($templates);
+
+        return $this;
+    }
+
+    public function getTemplates(): string
+    {
+        return $this->templates;
     }
 
     public function language(string|\Closure $language): static

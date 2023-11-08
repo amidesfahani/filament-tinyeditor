@@ -80,6 +80,23 @@ can switch the `direction` key in the config to 'rtl'.
 'direction' => 'rtl'
 ```
 
+### Template Plugin Examples (external template list)
+
+This is the contents your backend page should return if you specify a URL in the templates option. A simple array containing each template to present. This URL can be a backend page, for example a PHP file.
+
+```json
+[
+  {"title": "Some title 1", "description": "Some desc 1", "content": "My content"},
+  {"title": "Some title 2", "description": "Some desc 2", "content": "My content"}
+]
+```
+```php
+TinyEditor::make('contract')
+	->columnSpan('full')
+	->templates(route('my_template_route_name'))
+    ->required();
+```
+
 ## Versioning
 
 This project follow the [Semantic Versioning](https://semver.org/) guidelines.

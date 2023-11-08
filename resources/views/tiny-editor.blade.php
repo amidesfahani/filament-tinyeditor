@@ -45,9 +45,10 @@
 					@endif
 
 					plugins: '{{ $getPlugins() }}',
-		
 					toolbar: '{{ $getToolbar() }}',
 					toolbar_mode: 'sliding',
+
+					templates: '{{ $getTemplates() }}',
 		
 					menubar: {{ $getShowMenuBar() ? 'true' : 'false' }},
 					menu: {
