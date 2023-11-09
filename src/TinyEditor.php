@@ -5,6 +5,7 @@ namespace AmidEsfahani\FilamentTinyEditor;
 use Filament\Forms\Components\Concerns;
 use Filament\Forms\Components\Contracts;
 use Filament\Forms\Components\Field;
+use Illuminate\Support\Str;
 
 class TinyEditor extends Field implements Contracts\CanBeLengthConstrained, Contracts\HasFileAttachments
 {
