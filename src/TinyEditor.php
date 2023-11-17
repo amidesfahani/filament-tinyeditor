@@ -21,6 +21,8 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
     protected string $direction;
     protected int $maxHeight = 0;
     protected int $minHeight = 500;
+    protected int $previewMaxHeight = 0;
+    protected int $previewMinHeight = 0;
 
 	protected string $toolbar;
     protected bool $toolbarSticky = false;
@@ -313,6 +315,30 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
     public function minHeight(int $minHeight): static
     {
         $this->minHeight = $minHeight;
+
+        return $this;
+    }
+
+    public function getPreviewMaxHeight(): int
+    {
+        return $this->previewMaxHeight;
+    }
+
+    public function previewMaxHeight(int $previewMaxHeight): static
+    {
+        $this->previewMaxHeight = $previewMaxHeight;
+
+        return $this;
+    }
+
+    public function getPreviewMinHeight(): int
+    {
+        return $this->previewMinHeight;
+    }
+
+    public function previewMinHeight(int $previewMinHeight): static
+    {
+        $this->previewMinHeight = $previewMinHeight;
 
         return $this;
     }
