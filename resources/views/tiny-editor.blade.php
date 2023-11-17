@@ -8,7 +8,7 @@
 	@endphp
 
     <div
-        x-data="{ state: $wire.entangle('{{ $getStatePath() }}'), initialized: false }"
+		x-data="{ state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$getStatePath()}')") }}, initialized: false }"
 		x-load-css="[@js(\Filament\Support\Facades\FilamentAsset::getStyleHref('tiny-css', package: 'amidesfahani/filament-tinyeditor'))]"
         x-load-js="[@js(\Filament\Support\Facades\FilamentAsset::getScriptSrc($getLanguageId(), package: 'amidesfahani/filament-tinyeditor'))]"
         x-init="(() => {
@@ -27,13 +27,28 @@
 					max_height: {{ $getMaxHeight() }},
 					min_height: {{ $getMinHeight() }},
 
+					@if($darkMode() == 'media')
 					skin: (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'oxide-dark' : ''),
 					content_css: (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : ''),
+					@elseif($darkMode() == 'class')
+					skin: (document.querySelector('html').getAttribute('class').includes('dark') ? 'oxide-dark' : 'oxide'),
+					content_css: (document.querySelector('html').getAttribute('class').includes('dark') ? 'dark' : 'default'),
+					@elseif($darkMode() == 'force')
+					skin: 'oxide-dark',
+					content_css: 'dark',
+					@elseif($darkMode() == false)
+					skin: 'oxide',
+					content_css: 'default',
+					@else
+					skin: (window.matchMedia('(prefers-color-scheme: dark)').matches || document.querySelector('html').getAttribute('class').includes('dark') ? 'oxide-dark' : 'oxide'),
+					content_css: (window.matchMedia('(prefers-color-scheme: dark)').matches || document.querySelector('html').getAttribute('class').includes('dark') ? 'dark' : 'default'),
+					@endif
 
 					plugins: '{{ $getPlugins() }}',
-		
 					toolbar: '{{ $getToolbar() }}',
 					toolbar_mode: 'sliding',
+
+					templates: '{{ $getTemplates() }}',
 		
 					menubar: {{ $getShowMenuBar() ? 'true' : 'false' }},
 					menu: {
@@ -65,7 +80,6 @@
 						});
 		
 						editor.on('init', function(e) {
-							console.log('ready')
 							if (state != null) {
 							    editor.setContent(state)
 							}
@@ -139,3 +153,15 @@
         @endunless
     </div>
 </x-dynamic-component>
+
+@pushOnce('scripts')
+<script>
+window.addEventListener('beforeunload', (event) => {
+    if (tinymce.activeEditor.isDirty()) {
+        event.preventDefault();
+		// Included for legacy support, e.g. Chrome/Edge < 119
+		event.returnValue = '{{ __("Are you sure you want to leave?") }}';
+    }
+});
+</script>
+@endPushOnce
