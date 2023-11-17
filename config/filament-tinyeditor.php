@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'provider' => 'cloud', // cloud|vendor
     // 'direction' => 'rtl',
     /**
      * change darkMode: auto|force|class|media|false

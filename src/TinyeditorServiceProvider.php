@@ -7,12 +7,19 @@ use Filament\Support\Assets\Css;
 use Spatie\LaravelPackageTools\Package;
 use Filament\Support\Facades\FilamentAsset;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
+use Spatie\LaravelPackageTools\Commands\InstallCommand;
 
 class TinyeditorServiceProvider extends PackageServiceProvider
 {
 	public function configurePackage(Package $package): void
 	{
-		$package->name('filament-tinyeditor')->hasConfigFile()->hasViews();
+		$package->name('filament-tinyeditor')->hasConfigFile()->hasViews()
+            ->hasInstallCommand(function(InstallCommand $command) {
+                $command->publishConfigFile()->copyAndRegisterServiceProviderInApp()->askToStarRepoOnGitHub($this->getAssetPackageName());
+            }
+        );
+
+        $this->publishes([__DIR__.'/../vendor/tinymce/tinymce' => public_path('vendor/tinymce')], 'public');
 	}
 
 	public function packageBooted(): void
@@ -90,10 +97,23 @@ class TinyeditorServiceProvider extends PackageServiceProvider
             )->loadedOnRequest();
         }
 
+        $provider = config('filament-tinyeditor.provider', 'cloud');
+
+        $mainJs = 'https://cdn.jsdelivr.net/npm/tinymce@6.7.1/tinymce.js';
+        if ($provider == 'vendor')
+        {
+            $mainJs = asset('vendor/tinymce/tinymce.min.js');
+        }
+
         FilamentAsset::register([
 			Css::make('tiny-css', __DIR__ . '/../resources/css/style.css'),
-			Js::make('tinymce', 'https://cdn.jsdelivr.net/npm/tinymce@6.7.1/tinymce.js'),
+            Js::make('tinymce', $mainJs),
             ...$languages
-		], package: 'amidesfahani/filament-tinyeditor');
+		], package: $this->getAssetPackageName());
 	}
+
+    protected function getAssetPackageName(): ?string
+    {
+        return 'amidesfahani/filament-tinyeditor';
+    }
 }
