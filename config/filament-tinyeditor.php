@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'provider' => 'vendor', // cloud|vendor
     'direction' => 'rtl',
 	'profiles' => [
 		'default' => [
