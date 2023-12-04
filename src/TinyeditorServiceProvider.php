@@ -6,13 +6,14 @@ use Filament\Support\Assets\Js;
 use Filament\Support\Assets\Css;
 use Spatie\LaravelPackageTools\Package;
 use Filament\Support\Facades\FilamentAsset;
+use Filament\Support\Assets\AlpineComponent;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
 class TinyeditorServiceProvider extends PackageServiceProvider
 {
 	public function configurePackage(Package $package): void
 	{
-		$package->name('filament-tinyeditor')->hasConfigFile()->hasViews();
+		$package->name('filament-tinyeditor')->hasConfigFile()->hasTranslations()->hasViews();
 	}
 
 	public function packageBooted(): void
@@ -93,7 +94,8 @@ class TinyeditorServiceProvider extends PackageServiceProvider
         FilamentAsset::register([
 			Css::make('tiny-css', __DIR__ . '/../resources/css/style.css'),
 			Js::make('tinymce', 'https://cdn.jsdelivr.net/npm/tinymce@6.7.1/tinymce.js'),
-            ...$languages
+            ...$languages,
+            AlpineComponent::make('tinyeditor', __DIR__ . '/../resources/dist/filament-tinymce-editor.js'),
 		], package: 'amidesfahani/filament-tinyeditor');
 	}
 }

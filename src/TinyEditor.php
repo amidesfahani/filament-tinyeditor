@@ -6,12 +6,16 @@ use Filament\Forms\Components\Concerns;
 use Filament\Forms\Components\Contracts;
 use Filament\Forms\Components\Field;
 use Illuminate\Support\Str;
+use Filament\Forms\Components\Concerns\HasExtraInputAttributes;
+use Filament\Support\Concerns\HasExtraAlpineAttributes;
 
 class TinyEditor extends Field implements Contracts\CanBeLengthConstrained, Contracts\HasFileAttachments
 {
 	use Concerns\CanBeLengthConstrained;
     use Concerns\HasFileAttachments;
     use Concerns\HasPlaceholder;
+    use HasExtraAlpineAttributes;
+    use HasExtraInputAttributes;
 
 	protected string $view = 'filament-tinyeditor::tiny-editor';
 
@@ -30,7 +34,7 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
 
     protected array $externalPlugins;
 
-    protected bool $relativeUrls = true;
+    protected bool $relativeUrls = false;
     protected bool $removeScriptHost = true;
     protected bool $convertUrls = true;
 
