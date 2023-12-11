@@ -6,6 +6,7 @@ use Filament\Support\Assets\Js;
 use Filament\Support\Assets\Css;
 use Spatie\LaravelPackageTools\Package;
 use Filament\Support\Facades\FilamentAsset;
+use Filament\Support\Assets\AlpineComponent;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
 
@@ -108,6 +109,7 @@ class TinyeditorServiceProvider extends PackageServiceProvider
         FilamentAsset::register([
 			Css::make('tiny-css', __DIR__ . '/../resources/css/style.css'),
             Js::make('tinymce', $mainJs),
+            AlpineComponent::make('tinyeditor', __DIR__ . '/../resources/dist/filament-tinymce-editor.js'),
             ...$languages
 		], package: $this->getAssetPackageName());
 	}
