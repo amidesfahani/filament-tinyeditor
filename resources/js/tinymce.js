@@ -65,8 +65,6 @@ export default function tinyeditor({
         locale: locale,
 
 		init() {
-			console.log('hello tinyeditor')
-
 			this.initEditor(state.initialValue);
 
 			window.filamentTinyEditors = editors;
