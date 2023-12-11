@@ -12,6 +12,14 @@ Install the package via composer
 composer require amidesfahani/filament-tinyeditor
 ```
 
+Publish assets
+```bash
+php artisan vendor:publish --provider="AmidEsfahani\FilamentTinyEditor\TinyeditorServiceProvider"
+php artisan vendor:publish --provider="AmidEsfahani\FilamentTinyEditor\TinyeditorServiceProvider" --tag="config"
+php artisan vendor:publish --provider="AmidEsfahani\FilamentTinyEditor\TinyeditorServiceProvider" --tag="views"
+php artisan vendor:publish --provider="AmidEsfahani\FilamentTinyEditor\TinyeditorServiceProvider" --tag="public"
+```
+
 ## Usage
 
 The editor extends the default Field class so most other methods available on that class can be used when adding it to a form.
