@@ -2,31 +2,31 @@
 
 namespace AmidEsfahani\FilamentTinyEditor;
 
-use Filament\Support\Assets\Js;
-use Filament\Support\Assets\Css;
-use Illuminate\Support\Str;
-use Spatie\LaravelPackageTools\Package;
-use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Assets\AlpineComponent;
-use Spatie\LaravelPackageTools\PackageServiceProvider;
+use Filament\Support\Assets\Css;
+use Filament\Support\Assets\Js;
+use Filament\Support\Facades\FilamentAsset;
+use Illuminate\Support\Str;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
+use Spatie\LaravelPackageTools\Package;
+use Spatie\LaravelPackageTools\PackageServiceProvider;
 
 class TinyeditorServiceProvider extends PackageServiceProvider
 {
-	public function configurePackage(Package $package): void
-	{
-		$package->name('filament-tinyeditor')->hasConfigFile()->hasViews()
-            ->hasInstallCommand(function(InstallCommand $command) {
+    public function configurePackage(Package $package): void
+    {
+        $package->name('filament-tinyeditor')->hasConfigFile()->hasViews()
+            ->hasInstallCommand(function (InstallCommand $command) {
                 $command->publishConfigFile()->copyAndRegisterServiceProviderInApp()->askToStarRepoOnGitHub($this->getAssetPackageName());
             }
-        );
+            );
 
         $this->publishes([__DIR__.'/../vendor/tinymce/tinymce' => public_path('vendor/tinymce')], 'public');
-	}
+    }
 
-	public function packageBooted(): void
+    public function packageBooted(): void
     {
-		$tiny_languages = [
+        $tiny_languages = [
             'tinymce-lang-ar' => 'https://cdn.jsdelivr.net/npm/tinymce-i18n@23.10.9/langs6/ar.min.js',
             'tinymce-lang-az' => 'https://cdn.jsdelivr.net/npm/tinymce-i18n@23.10.9/langs6/az.min.js',
             'tinymce-lang-bg_BG' => 'https://cdn.jsdelivr.net/npm/tinymce-i18n@23.10.9/langs6/bg_BG.min.js',
@@ -82,19 +82,18 @@ class TinyeditorServiceProvider extends PackageServiceProvider
             'tinymce-lang-ug' => 'https://cdn.jsdelivr.net/npm/tinymce-i18n@23.10.9/langs6/ug.min.js',
             'tinymce-lang-uk' => 'https://cdn.jsdelivr.net/npm/tinymce-i18n@23.10.9/langs6/uk.min.js',
             'tinymce-lang-vi' => 'https://cdn.jsdelivr.net/npm/tinymce-i18n@23.10.9/langs6/vi.min.js',
-		];
+        ];
 
         $languages = [];
         $optional_languages = config('filament-tinyeditor.languages', []);
-        if (!is_array($optional_languages))
-        {
+        if (! is_array($optional_languages)) {
             $optional_languages = [];
         }
 
         foreach ($tiny_languages as $locale => $language) {
             $locale = str_replace('tinymce-lang-', '', $locale);
             $languages[] = Js::make(
-                'tinymce-lang-' . $locale,
+                'tinymce-lang-'.$locale,
                 array_key_exists($locale, $optional_languages) ? $optional_languages[$locale] : $language
             )->loadedOnRequest();
         }
@@ -102,18 +101,17 @@ class TinyeditorServiceProvider extends PackageServiceProvider
         $provider = config('filament-tinyeditor.provider', 'cloud');
 
         $mainJs = 'https://cdn.jsdelivr.net/npm/tinymce@6.7.1/tinymce.js';
-        if ($provider == 'vendor')
-        {
+        if ($provider == 'vendor') {
             $mainJs = asset('vendor/tinymce/tinymce.min.js', Str::contains(config('app.url'), 'https'));
         }
 
         FilamentAsset::register([
-			Css::make('tiny-css', __DIR__ . '/../resources/css/style.css'),
+            Css::make('tiny-css', __DIR__.'/../resources/css/style.css'),
             Js::make('tinymce', $mainJs),
-            AlpineComponent::make('tinyeditor', __DIR__ . '/../resources/dist/filament-tinymce-editor.js'),
-            ...$languages
-		], package: $this->getAssetPackageName());
-	}
+            AlpineComponent::make('tinyeditor', __DIR__.'/../resources/dist/filament-tinymce-editor.js'),
+            ...$languages,
+        ], package: $this->getAssetPackageName());
+    }
 
     protected function getAssetPackageName(): ?string
     {
