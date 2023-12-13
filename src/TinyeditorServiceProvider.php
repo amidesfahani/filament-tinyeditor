@@ -4,6 +4,7 @@ namespace AmidEsfahani\FilamentTinyEditor;
 
 use Filament\Support\Assets\Js;
 use Filament\Support\Assets\Css;
+use Illuminate\Support\Str;
 use Spatie\LaravelPackageTools\Package;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Assets\AlpineComponent;
@@ -103,7 +104,7 @@ class TinyeditorServiceProvider extends PackageServiceProvider
         $mainJs = 'https://cdn.jsdelivr.net/npm/tinymce@6.7.1/tinymce.js';
         if ($provider == 'vendor')
         {
-            $mainJs = asset('vendor/tinymce/tinymce.min.js');
+            $mainJs = asset('vendor/tinymce/tinymce.min.js', Str::contains(config('app.url'), 'https'));
         }
 
         FilamentAsset::register([
