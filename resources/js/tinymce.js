@@ -31,7 +31,7 @@ export default function tinyeditor({
 	placeholder = null,
  }) {
 	 let editors = window.filamentTinyEditors || {};
- 
+
 	 return {
 		id: null,
         state: state,
@@ -53,13 +53,13 @@ export default function tinyeditor({
 		toolbar_sticky: toolbar_sticky,
 
 		templates: templates,
-	
+
 		menubar: menubar,
 
 		relative_urls: relative_urls,
 		remove_script_host: remove_script_host,
 		convert_urls: convert_urls,
-		
+
         updatedAt: Date.now(),
         disabled,
         locale: locale,
@@ -77,7 +77,7 @@ export default function tinyeditor({
 
 				if (this.editor().container && newState !== this.editor().getContent()) {
 					this.editor().resetContent(newState || '');
-					putCursorToEnd();
+					this.putCursorToEnd();
 				}
 			});
 		},
@@ -94,16 +94,16 @@ export default function tinyeditor({
 				language: language,
 				language_url: language_url,
 				directionality: directionality,
-				
+
 				statusbar: false,
 				promotion: false,
-				
+
 				max_height: max_height,
 				min_height: min_height,
-				
+
 				skin: skin,
 				content_css: content_css,
-				
+
 				plugins: plugins,
 				toolbar: toolbar,
 				toolbar_sticky: toolbar_sticky,
@@ -111,7 +111,7 @@ export default function tinyeditor({
 				toolbar_mode: 'sliding',
 
 				templates: templates,
-	
+
 				menubar: menubar,
 				menu: {
 					file: { title: 'File', items: 'newdocument restoredraft | preview | export print | deleteallconversations' },
@@ -123,25 +123,25 @@ export default function tinyeditor({
 					table: { title: 'Table', items: 'inserttable | cell row column | advtablesort | tableprops deletetable' },
 					help: { title: 'Help', items: 'help' }
 				},
-	
+
 				relative_urls: relative_urls,
 				remove_script_host: remove_script_host,
 				convert_urls: convert_urls,
-	
+
 				setup: function (editor) {
 					if (!window.tinySettingsCopy) {
 						window.tinySettingsCopy = [];
 					}
 
-					if (!window.tinySettingsCopy.some(obj => obj.id === editor.settings.id)) {
-						window.tinySettingsCopy.push(editor.settings);
-					}
+                    if (editor.settings && !window.tinySettingsCopy.some(obj => obj.id === editor.settings.id)) {
+                        window.tinySettingsCopy.push(editor.settings);
+                    }
 
 					editor.on('blur', function(e) {
 						_this.updatedAt = Date.now();
                     	_this.state = editor.getContent();
 					});
-	
+
 					editor.on('init', function(e) {
 						editors[_this.statePath] = editor.id
 						if (content != null) {
