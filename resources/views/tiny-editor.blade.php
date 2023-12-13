@@ -54,7 +54,7 @@
 			toolbar_sticky: {{ $getToolbarSticky() ? 'true' : 'false' }},
 
 			templates: '{{ $getTemplates() }}',
-	
+
 			menubar: {{ $getShowMenuBar() ? 'true' : 'false' }},
 
 			relative_urls: {{ $getRelativeUrls() ? 'true' : 'false' }},
@@ -63,7 +63,8 @@
 
 			disabled: @js($isDisabled),
 			locale: '{{ app()->getLocale() }}',
-			placeholder: @js($getPlaceholder())
+			placeholder: @js($getPlaceholder()),
+			{{ $getCustomConfigs() }}
 		})"
     >
         @unless($isDisabled())
