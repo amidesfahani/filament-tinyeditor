@@ -26,6 +26,8 @@ export default function tinyeditor({
 	remove_script_host = true,
 	convert_urls = true,
 
+	custom_configs = {},
+
 	disabled = false,
 	locale = 'en',
 	placeholder = null,
@@ -59,6 +61,8 @@ export default function tinyeditor({
 		relative_urls: relative_urls,
 		remove_script_host: remove_script_host,
 		convert_urls: convert_urls,
+
+		custom_configs: custom_configs,
 		
         updatedAt: Date.now(),
         disabled,
@@ -77,7 +81,7 @@ export default function tinyeditor({
 
 				if (this.editor().container && newState !== this.editor().getContent()) {
 					this.editor().resetContent(newState || '');
-					putCursorToEnd();
+					this.putCursorToEnd();
 				}
 			});
 		},
@@ -127,13 +131,15 @@ export default function tinyeditor({
 				relative_urls: relative_urls,
 				remove_script_host: remove_script_host,
 				convert_urls: convert_urls,
+
+				...custom_configs,
 	
 				setup: function (editor) {
 					if (!window.tinySettingsCopy) {
 						window.tinySettingsCopy = [];
 					}
 
-					if (!window.tinySettingsCopy.some(obj => obj.id === editor.settings.id)) {
+					if (editor.settings && !window.tinySettingsCopy.some(obj => obj.id === editor.settings.id)) {
 						window.tinySettingsCopy.push(editor.settings);
 					}
 

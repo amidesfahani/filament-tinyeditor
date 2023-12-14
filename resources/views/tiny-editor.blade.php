@@ -63,7 +63,8 @@
 
 			disabled: @js($isDisabled),
 			locale: '{{ app()->getLocale() }}',
-			placeholder: @js($getPlaceholder())
+			placeholder: @js($getPlaceholder()),
+			{{ $getCustomConfigs() }}
 		})"
     >
         @unless($isDisabled())
