@@ -77,7 +77,7 @@ export default function tinyeditor({
 
 				if (this.editor().container && newState !== this.editor().getContent()) {
 					this.editor().resetContent(newState || '');
-					putCursorToEnd();
+					this.putCursorToEnd();
 				}
 			});
 		},
@@ -133,7 +133,7 @@ export default function tinyeditor({
 						window.tinySettingsCopy = [];
 					}
 
-					if (!window.tinySettingsCopy.some(obj => obj.id === editor.settings.id)) {
+					if (editor.settings && !window.tinySettingsCopy.some(obj => obj.id === editor.settings.id)) {
 						window.tinySettingsCopy.push(editor.settings);
 					}
 
