@@ -291,13 +291,13 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
         return $this;
     }
 
-    public function getCustomConfigs(): string
+    public function getCustomConfigs(): array
     {
         if (config('filament-tinyeditor.profiles.'.$this->profile.'.custom_configs')) {
-            return '...'.json_encode(config('filament-tinyeditor.profiles.'.$this->profile.'.custom_configs'));
+            return config('filament-tinyeditor.profiles.'.$this->profile.'.custom_configs');
         }
 
-        return '';
+        return [];
     }
 
     public function darkMode(): string|bool

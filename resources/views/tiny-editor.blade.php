@@ -61,10 +61,11 @@
 			remove_script_host: {{ $getRemoveScriptHost() ? 'true' : 'false' }},
 			convert_urls: {{ $getConvertUrls() ? 'true' : 'false' }},
 
+			custom_configs: @js($getCustomConfigs()),
+
 			disabled: @js($isDisabled),
 			locale: '{{ app()->getLocale() }}',
 			placeholder: @js($getPlaceholder()),
-			{{ $getCustomConfigs() }}
 		})"
     >
         @unless($isDisabled())
