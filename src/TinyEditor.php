@@ -3,46 +3,55 @@
 namespace AmidEsfahani\FilamentTinyEditor;
 
 use Filament\Forms\Components\Concerns;
+use Filament\Forms\Components\Concerns\HasExtraInputAttributes;
 use Filament\Forms\Components\Contracts;
 use Filament\Forms\Components\Field;
-use Illuminate\Support\Str;
-use Filament\Forms\Components\Concerns\HasExtraInputAttributes;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
+use Illuminate\Support\Str;
 
 class TinyEditor extends Field implements Contracts\CanBeLengthConstrained, Contracts\HasFileAttachments
 {
-	use Concerns\CanBeLengthConstrained;
+    use Concerns\CanBeLengthConstrained;
     use Concerns\HasFileAttachments;
     use Concerns\HasPlaceholder;
     use HasExtraAlpineAttributes;
     use HasExtraInputAttributes;
 
-	protected string $view = 'filament-tinyeditor::tiny-editor';
+    protected string $view = 'filament-tinyeditor::tiny-editor';
 
     protected string $profile = 'default';
+
     protected bool $isSimple = false;
-    
+
     protected string $direction;
+
     protected int $maxHeight = 0;
+
     protected int $minHeight = 500;
+
     protected int $previewMaxHeight = 0;
+
     protected int $previewMinHeight = 0;
 
-	protected string $toolbar;
+    protected string $toolbar;
+
     protected bool $toolbarSticky = false;
+
     protected bool $showMenuBar = false;
 
     protected array $externalPlugins;
 
     protected bool $relativeUrls = false;
+
     protected bool $removeScriptHost = true;
+
     protected bool $convertUrls = true;
 
     protected string $templates = '';
 
-    protected string|bool $darkMode;
+    protected string | bool $darkMode;
 
-    protected string|\Closure $language;
+    protected string | \Closure $language;
 
     protected function setUp(): void
     {
@@ -60,12 +69,11 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
             $toolbar = 'removeformat | bold italic | rtl ltr | link emoticons';
         }
 
-        if (config('filament-tinyeditor.profiles.'.$this->profile.'.toolbar')) {
-            $toolbar = config('filament-tinyeditor.profiles.'.$this->profile.'.toolbar');
+        if (config('filament-tinyeditor.profiles.' . $this->profile . '.toolbar')) {
+            $toolbar = config('filament-tinyeditor.profiles.' . $this->profile . '.toolbar');
         }
 
-        if (!Str::contains($this->templates, 'template'))
-        {
+        if (! Str::contains($this->templates, 'template')) {
             $toolbar .= ' template';
         }
 
@@ -80,12 +88,11 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
             $plugins = 'autoresize directionality emoticons link wordcount';
         }
 
-        if (config('filament-tinyeditor.profiles.'.$this->profile.'.plugins')) {
-            $plugins = config('filament-tinyeditor.profiles.'.$this->profile.'.plugins');
+        if (config('filament-tinyeditor.profiles.' . $this->profile . '.plugins')) {
+            $plugins = config('filament-tinyeditor.profiles.' . $this->profile . '.plugins');
         }
 
-        if (!Str::contains($this->templates, 'template'))
-        {
+        if (! Str::contains($this->templates, 'template')) {
             $plugins .= ' template';
         }
 
@@ -99,7 +106,7 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
 
     public function getFileAttachmentsDirectory(): ?string
     {
-        return filled($directory = $this->evaluate($this->fileAttachmentsDirectory)) ? $directory : config('filament-tinyeditor.profiles.'.$this->profile.'.upload_directory');
+        return filled($directory = $this->evaluate($this->fileAttachmentsDirectory)) ? $directory : config('filament-tinyeditor.profiles.' . $this->profile . '.upload_directory');
     }
 
     public function templates(string $templates): static
@@ -114,7 +121,7 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
         return $this->templates;
     }
 
-    public function language(string|\Closure $language): static
+    public function language(string | \Closure $language): static
     {
         $this->language = $language;
 
@@ -245,8 +252,7 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
 
     public function getDirection()
     {
-        if (!$this->direction || $this->direction == 'auto')
-        {
+        if (! $this->direction || $this->direction == 'auto') {
             return match ($this->getInterfaceLanguage()) {
                 'ar' => 'rtl',
                 'fa' => 'rtl',
@@ -287,22 +293,22 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
 
     public function getCustomConfigs(): string
     {
-        if (config('filament-tinyeditor.profiles.'.$this->profile.'.custom_configs')) {
-            return '...'.json_encode(config('filament-tinyeditor.profiles.'.$this->profile.'.custom_configs'));
+        if (config('filament-tinyeditor.profiles.' . $this->profile . '.custom_configs')) {
+            return '...' . json_encode(config('filament-tinyeditor.profiles.' . $this->profile . '.custom_configs'));
         }
 
         return '';
     }
 
-    public function darkMode(): string|bool
+    public function darkMode(): string | bool
     {
         return $this->darkMode;
     }
 
-	public function getMaxHeight(): int
-	{
-		return $this->maxHeight;
-	}
+    public function getMaxHeight(): int
+    {
+        return $this->maxHeight;
+    }
 
     public function maxHeight(int $maxHeight): static
     {
@@ -311,10 +317,10 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
         return $this;
     }
 
-	public function getMinHeight(): int
-	{
-		return $this->minHeight;
-	}
+    public function getMinHeight(): int
+    {
+        return $this->minHeight;
+    }
 
     public function minHeight(int $minHeight): static
     {
@@ -347,12 +353,12 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
         return $this;
     }
 
-	public function getToolbarSticky(): bool
+    public function getToolbarSticky(): bool
     {
         return $this->toolbarSticky;
     }
 
-	public function toolbarSticky(bool $toolbarSticky): static
+    public function toolbarSticky(bool $toolbarSticky): static
     {
         $this->toolbarSticky = $toolbarSticky;
 
@@ -364,14 +370,14 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
         return $this->showMenuBar;
     }
 
-	public function showMenuBar(): static
+    public function showMenuBar(): static
     {
         $this->showMenuBar = true;
 
         return $this;
     }
 
-	public function getRelativeUrls(): bool
+    public function getRelativeUrls(): bool
     {
         return $this->relativeUrls;
     }

@@ -1,0 +1,15 @@
+{
+    "preset": "laravel",
+    "rules": {
+        "concat_space": {
+            "spacing": "one"
+        },
+        "method_argument_space": {
+            "on_multiline": "ignore"
+        },
+        "single_trait_insert_per_statement": true,
+        "types_spaces": {
+            "space": "single"
+        }
+    }
+}

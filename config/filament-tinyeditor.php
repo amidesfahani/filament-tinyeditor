@@ -7,8 +7,8 @@ return [
      * change darkMode: auto|force|class|media|false
      */
     'darkMode' => 'auto',
-	'profiles' => [
-		'default' => [
+    'profiles' => [
+        'default' => [
             'plugins' => 'accordion autoresize codesample directionality advlist link image lists preview pagebreak searchreplace wordcount code fullscreen insertdatetime media table emoticons',
             'toolbar' => 'undo redo removeformat | styles | bold italic | rtl ltr | alignjustify alignleft aligncenter alignright | numlist bullist outdent indent | forecolor backcolor | blockquote table toc hr | image link media codesample emoticons | wordcount fullscreen',
             'upload_directory' => null,
@@ -31,7 +31,7 @@ return [
             'toolbar' => 'undo redo removeformat | styles | bold italic | rtl ltr | alignjustify alignright aligncenter alignleft | numlist bullist outdent indent accordion | forecolor backcolor | blockquote table toc hr | image link anchor media codesample emoticons | visualblocks print preview wordcount fullscreen help',
             'upload_directory' => null,
         ],
-	],
+    ],
 
     /**
      * this option will load optional language file based on you app locale
@@ -42,8 +42,5 @@ return [
      *      'ja' => asset('assets/ja.min.js')
      * ]
      */
-
-    'languages' => []
+    'languages' => [],
 ];
-
-?>
