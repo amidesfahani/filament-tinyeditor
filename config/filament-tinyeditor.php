@@ -6,7 +6,7 @@ return [
     /**
      * change darkMode: 'auto'|'force'|'class'|'media'|false|'custom'
      */
-    'darkMode' => 'class',
+    'darkMode' => 'auto',
 
     /** cutsom */
     'skins' => [

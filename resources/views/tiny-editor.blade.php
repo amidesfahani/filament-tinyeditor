@@ -64,6 +64,8 @@
 			remove_script_host: {{ $getRemoveScriptHost() ? 'true' : 'false' }},
 			convert_urls: {{ $getConvertUrls() ? 'true' : 'false' }},
 
+			setup: null,
+
 			disabled: @js($isDisabled),
 			locale: '{{ app()->getLocale() }}',
 			placeholder: @js($getPlaceholder()),
@@ -99,5 +101,38 @@
 // 		event.returnValue = '{{ __("Are you sure you want to leave?") }}';
 //     }
 // });
+
+const upload_config = {
+	title: 'Upload files',
+	size: 'medium',
+	body: {
+		type: 'panel',
+		items: [
+			{
+				type: 'dropzone',
+				name: 'file_drop',
+				label: 'Dropzone',
+				class: 'mb-4',
+			}
+		]
+	},
+	buttons: [
+		{
+			type: 'cancel',
+			name: 'closeButton',
+			text: 'Cancel',
+		},
+		{
+			type: 'submit',
+			name: 'submitButton',
+			text: 'Upload',
+			buttonType: 'primary'
+		}
+	],
+	onSubmit: (api) => {
+		// handle upload here
+	}
+};
+
 </script>
 @endPushOnce
