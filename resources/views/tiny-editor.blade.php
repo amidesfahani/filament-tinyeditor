@@ -35,8 +35,8 @@
 			min_height: {{ $getMinHeight() }},
 
 			@if($darkMode() == 'media')
-			skin: (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'oxide-dark' : ''),
-			content_css: (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : ''),
+			skin: (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'oxide-dark' : 'oxide'),
+			content_css: (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'default'),
 			@elseif($darkMode() == 'class')
 			skin: (document.querySelector('html').getAttribute('class').includes('dark') ? 'oxide-dark' : 'oxide'),
 			content_css: (document.querySelector('html').getAttribute('class').includes('dark') ? 'dark' : 'default'),
@@ -46,6 +46,9 @@
 			@elseif($darkMode() == false)
 			skin: 'oxide',
 			content_css: 'default',
+			@elseif($darkMode() == 'custom')
+			skin: '{{ $skinsUI() }}',
+			content_css: '{{ $skinsContent() }}',
 			@else
 			skin: (window.matchMedia('(prefers-color-scheme: dark)').matches || document.querySelector('html').getAttribute('class').includes('dark') ? 'oxide-dark' : 'oxide'),
 			content_css: (window.matchMedia('(prefers-color-scheme: dark)').matches || document.querySelector('html').getAttribute('class').includes('dark') ? 'dark' : 'default'),
