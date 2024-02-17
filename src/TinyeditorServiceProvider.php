@@ -21,7 +21,12 @@ class TinyeditorServiceProvider extends PackageServiceProvider
                 }
             );
 
-        $this->publishes([__DIR__ . '/../vendor/tinymce/tinymce' => public_path('vendor/tinymce')], 'public');
+        if (file_exists(__DIR__ . '/../../../vendor/tinymce/tinymce')) {
+            $this->publishes([__DIR__ . '/../../../vendor/tinymce/tinymce' => public_path('vendor/tinymce')], 'public');
+        }
+        else if (file_exists(base_path('vendor/tinymce/tinymce'))) {
+            $this->publishes([base_path('vendor/tinymce/tinymce') => public_path('vendor/tinymce')], 'public');
+        }
     }
 
     public function packageBooted(): void
