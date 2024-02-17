@@ -18,44 +18,29 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
     use HasExtraInputAttributes;
 
     protected string $view = 'filament-tinyeditor::tiny-editor';
-
     protected string $profile = 'default';
-
     protected bool $isSimple = false;
-
     protected string $direction;
-
     protected int $maxHeight = 0;
-
     protected int $minHeight = 500;
-
     protected int $previewMaxHeight = 0;
-
     protected int $previewMinHeight = 0;
-
     protected string $toolbar;
-
     protected bool $toolbarSticky = false;
-
     protected bool $showMenuBar = false;
-
     protected array $externalPlugins;
-
     protected bool $relativeUrls = false;
-
     protected bool $removeScriptHost = true;
-
     protected bool $convertUrls = true;
-
     protected string $templates = '';
-
-    protected string | bool $darkMode;
-
+    protected string|bool $darkMode;
     protected string $skinsUI;
-
     protected string $skinsContent;
-
-    protected string | \Closure $language;
+    protected string|\Closure $language;
+    protected string|array|bool $imageList = false;
+    protected string|array|bool $imageClassList = false;
+    protected bool $imageAdvtab = false;
+    protected bool $imageDescription = true;
 
     protected function setUp(): void
     {
@@ -300,7 +285,7 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
     public function getCustomConfigs(): string
     {
         if (config('filament-tinyeditor.profiles.' . $this->profile . '.custom_configs')) {
-            return '...' . json_encode(config('filament-tinyeditor.profiles.' . $this->profile . '.custom_configs'));
+            return str_replace('"', "'", json_encode(config('filament-tinyeditor.profiles.' . $this->profile . '.custom_configs')));
         }
 
         return '';
@@ -437,6 +422,65 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
     public function setExternalPlugins(array $plugins): static
     {
         $this->externalPlugins = $plugins;
+
+        return $this;
+    }
+
+    public function imageList(string|array $list): static
+    {
+        if (is_array($list)) {
+            $list = str_replace('"', "'", json_encode($list));
+        }
+
+        $this->imageList = $list;
+
+        return $this;
+    }
+
+    public function getImageList(): string|bool
+    {
+        if (!$this->imageList) {
+            return 'false';
+        }
+        return $this->imageList;
+    }
+
+    public function imageClassList(string|array $list): static
+    {
+        if (is_array($list)) {
+            $list = str_replace('"', "'", json_encode($list));
+        }
+
+        $this->imageClassList = $list;
+
+        return $this;
+    }
+
+    public function getImageClassList(): string|bool
+    {
+        if (!$this->imageClassList) {
+            return 'false';
+        }
+        return $this->imageClassList;
+    }
+
+    public function imageAdvtab(): bool
+    {
+        return $this->imageAdvtab ?? false;
+    }
+
+    public function imageDescription(): bool
+    {
+        return $this->imageDescription ?? true;
+    }
+
+    public function options(array $options): static
+    {
+        foreach ($options as $key => $value) {
+            if (property_exists($this, $key)) {
+                $this->$key = $value;
+            }
+        }
 
         return $this;
     }

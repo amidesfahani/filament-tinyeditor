@@ -21,19 +21,14 @@
 		x-data="tinyeditor({
 			state: $wire.{{ $applyStateBindingModifiers("entangle('{$statePath}')", isOptimisticallyLive: false) }},
 			statePath: '{{ $statePath }}',
-
 			selector: '#{{ $textareaID }}',
-
 			plugins: '{{ $getPlugins() }}',
 			toolbar: '{{ $getToolbar() }}',
-
 			language: '{{ $getInterfaceLanguage() }}',
 			language_url: 'https://cdn.jsdelivr.net/npm/tinymce-i18n@23.10.9/langs6/{{ $getInterfaceLanguage() }}.min.js',
 			directionality: '{{ $getDirection() }}',
-
 			max_height: {{ $getMaxHeight() }},
 			min_height: {{ $getMinHeight() }},
-
 			@if($darkMode() == 'media')
 			skin: (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'oxide-dark' : 'oxide'),
 			content_css: (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'default'),
@@ -53,23 +48,21 @@
 			skin: (window.matchMedia('(prefers-color-scheme: dark)').matches || document.querySelector('html').getAttribute('class').includes('dark') ? 'oxide-dark' : 'oxide'),
 			content_css: (window.matchMedia('(prefers-color-scheme: dark)').matches || document.querySelector('html').getAttribute('class').includes('dark') ? 'dark' : 'default'),
 			@endif
-
 			toolbar_sticky: {{ $getToolbarSticky() ? 'true' : 'false' }},
-
 			templates: '{{ $getTemplates() }}',
-	
 			menubar: {{ $getShowMenuBar() ? 'true' : 'false' }},
-
 			relative_urls: {{ $getRelativeUrls() ? 'true' : 'false' }},
 			remove_script_host: {{ $getRemoveScriptHost() ? 'true' : 'false' }},
 			convert_urls: {{ $getConvertUrls() ? 'true' : 'false' }},
-
 			setup: null,
-
 			disabled: @js($isDisabled),
 			locale: '{{ app()->getLocale() }}',
 			placeholder: @js($getPlaceholder()),
-			{{ $getCustomConfigs() }}
+			image_list: {!! $getImageList() !!},
+			image_advtab: @js($imageAdvtab()),
+			image_description: @js($imageDescription()),
+			image_class_list: {!! $getImageClassList() !!},
+			custom_configs: @js($getCustomConfigs())
 		})"
     >
         @unless($isDisabled())
@@ -101,38 +94,5 @@
 // 		event.returnValue = '{{ __("Are you sure you want to leave?") }}';
 //     }
 // });
-
-const upload_config = {
-	title: 'Upload files',
-	size: 'medium',
-	body: {
-		type: 'panel',
-		items: [
-			{
-				type: 'dropzone',
-				name: 'file_drop',
-				label: 'Dropzone',
-				class: 'mb-4',
-			}
-		]
-	},
-	buttons: [
-		{
-			type: 'cancel',
-			name: 'closeButton',
-			text: 'Cancel',
-		},
-		{
-			type: 'submit',
-			name: 'submitButton',
-			text: 'Upload',
-			buttonType: 'primary'
-		}
-	],
-	onSubmit: (api) => {
-		// handle upload here
-	}
-};
-
 </script>
 @endPushOnce
