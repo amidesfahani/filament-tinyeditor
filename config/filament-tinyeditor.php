@@ -4,9 +4,19 @@ return [
     'provider' => 'cloud', // cloud|vendor
     // 'direction' => 'rtl',
     /**
-     * change darkMode: auto|force|class|media|false
+     * change darkMode: 'auto'|'force'|'class'|'media'|false|'custom'
      */
     'darkMode' => 'auto',
+
+    /** cutsom */
+    'skins' => [
+        // oxide, oxide-dark, tinymce-5, tinymce-5-dark
+        'ui' => 'oxide',
+
+        // dark, default, document, tinymce-5, tinymce-5-dark, writer
+        'content' => 'default'
+    ],
+    
     'profiles' => [
         'default' => [
             'plugins' => 'accordion autoresize codesample directionality advlist link image lists preview pagebreak searchreplace wordcount code fullscreen insertdatetime media table emoticons',

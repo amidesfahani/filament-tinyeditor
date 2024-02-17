@@ -28,6 +28,8 @@ export default function tinyeditor({
 
 	custom_configs = {},
 
+	setup = null,
+
 	disabled = false,
 	locale = 'en',
 	placeholder = null,
@@ -61,6 +63,8 @@ export default function tinyeditor({
 		relative_urls: relative_urls,
 		remove_script_host: remove_script_host,
 		convert_urls: convert_urls,
+
+		setup: setup,
 
 		custom_configs: custom_configs,
 		
@@ -154,6 +158,10 @@ export default function tinyeditor({
 							editor.setContent(content)
 						}
 					});
+
+					if (typeof setup === 'function') {
+						setup(editor);
+					}
 				},
 
 				images_upload_handler: (blobInfo, progress) => new Promise((resolve, reject) => {

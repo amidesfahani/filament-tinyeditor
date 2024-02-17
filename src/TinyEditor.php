@@ -51,6 +51,10 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
 
     protected string | bool $darkMode;
 
+    protected string $skinsUI;
+
+    protected string $skinsContent;
+
     protected string | \Closure $language;
 
     protected function setUp(): void
@@ -60,6 +64,8 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
         $this->language = app()->getLocale();
         $this->direction = config('filament-tinyeditor.direction', 'ltr');
         $this->darkMode = config('filament-tinyeditor.darkMode', 'auto');
+        $this->skinsUI = config('filament-tinyeditor.skins.ui', 'oxide');
+        $this->skinsContent = config('filament-tinyeditor.skins.content', 'default');
     }
 
     public function getToolbar(): string
@@ -303,6 +309,16 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
     public function darkMode(): string | bool
     {
         return $this->darkMode;
+    }
+
+    public function skinsUI(): string
+    {
+        return $this->skinsUI;
+    }
+
+    public function skinsContent(): string
+    {
+        return $this->skinsContent;
     }
 
     public function getMaxHeight(): int

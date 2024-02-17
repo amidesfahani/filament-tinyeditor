@@ -35,8 +35,8 @@
 			min_height: {{ $getMinHeight() }},
 
 			@if($darkMode() == 'media')
-			skin: (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'oxide-dark' : ''),
-			content_css: (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : ''),
+			skin: (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'oxide-dark' : 'oxide'),
+			content_css: (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'default'),
 			@elseif($darkMode() == 'class')
 			skin: (document.querySelector('html').getAttribute('class').includes('dark') ? 'oxide-dark' : 'oxide'),
 			content_css: (document.querySelector('html').getAttribute('class').includes('dark') ? 'dark' : 'default'),
@@ -46,6 +46,9 @@
 			@elseif($darkMode() == false)
 			skin: 'oxide',
 			content_css: 'default',
+			@elseif($darkMode() == 'custom')
+			skin: '{{ $skinsUI() }}',
+			content_css: '{{ $skinsContent() }}',
 			@else
 			skin: (window.matchMedia('(prefers-color-scheme: dark)').matches || document.querySelector('html').getAttribute('class').includes('dark') ? 'oxide-dark' : 'oxide'),
 			content_css: (window.matchMedia('(prefers-color-scheme: dark)').matches || document.querySelector('html').getAttribute('class').includes('dark') ? 'dark' : 'default'),
@@ -60,6 +63,8 @@
 			relative_urls: {{ $getRelativeUrls() ? 'true' : 'false' }},
 			remove_script_host: {{ $getRemoveScriptHost() ? 'true' : 'false' }},
 			convert_urls: {{ $getConvertUrls() ? 'true' : 'false' }},
+
+			setup: null,
 
 			disabled: @js($isDisabled),
 			locale: '{{ app()->getLocale() }}',
@@ -96,5 +101,38 @@
 // 		event.returnValue = '{{ __("Are you sure you want to leave?") }}';
 //     }
 // });
+
+const upload_config = {
+	title: 'Upload files',
+	size: 'medium',
+	body: {
+		type: 'panel',
+		items: [
+			{
+				type: 'dropzone',
+				name: 'file_drop',
+				label: 'Dropzone',
+				class: 'mb-4',
+			}
+		]
+	},
+	buttons: [
+		{
+			type: 'cancel',
+			name: 'closeButton',
+			text: 'Cancel',
+		},
+		{
+			type: 'submit',
+			name: 'submitButton',
+			text: 'Upload',
+			buttonType: 'primary'
+		}
+	],
+	onSubmit: (api) => {
+		// handle upload here
+	}
+};
+
 </script>
 @endPushOnce
