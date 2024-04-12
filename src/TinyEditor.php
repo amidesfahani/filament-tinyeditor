@@ -175,7 +175,12 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
             'ug' => 'ug',
             'uk' => 'uk',
             'vi' => 'vi',
-            'zh' => 'zh_CN',
+            'zh' => 'zh-Hans',
+            'zh-CN' => 'zh-Hans',
+            'zh-TW' => 'zh-Hant',
+            'zh-HK' => 'zh_HK',
+            'zh-MO' => 'zh_MO',
+            'zh-SG' => 'zh_SG',
             default => 'en',
         };
     }
@@ -237,6 +242,11 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
             'uk' => 'tinymce-lang-uk',
             'vi' => 'tinymce-lang-vi',
             'zh' => 'tinymce-lang-zh_CN',
+            'zh-cn' => 'tinymce-lang-zh_CN',
+            'zh-tw' => 'tinymce-lang-zh_TW',
+            'zh-hk' => 'tinymce-lang-zh_HK',
+            'zh-mo' => 'tinymce-lang-zh_MO',
+            'zh-sg' => 'tinymce-lang-zh_SG',
             default => 'tinymce',
         };
     }
