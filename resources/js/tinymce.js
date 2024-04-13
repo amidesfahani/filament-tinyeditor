@@ -14,6 +14,8 @@ export default function tinyeditor({
 	toolbar_sticky = false,
 	templates = "",
 	menubar = false,
+	font_size_formats = '',
+	fontfamily = '',
 	relative_urls = true,
 	image_list = null,
 	image_advtab = false,
@@ -25,6 +27,7 @@ export default function tinyeditor({
 	setup = null,
 	disabled = false,
 	locale = "en",
+	license_key = "gpl",
 	placeholder = null,
 }) {
 	let editors = window.filamentTinyEditors || {};
@@ -48,11 +51,14 @@ export default function tinyeditor({
 		relative_urls: relative_urls,
 		remove_script_host: remove_script_host,
 		convert_urls: convert_urls,
+		font_size_formats: font_size_formats,
+		fontfamily: fontfamily,
 		setup: setup,
 		image_list: image_list,
 		image_advtab: image_advtab,
 		image_description: image_description,
 		image_class_list: image_class_list,
+		license_key: license_key,
 		custom_configs: custom_configs,
 		updatedAt: Date.now(),
 		disabled,
@@ -109,6 +115,9 @@ export default function tinyeditor({
 					table: { title: "Table", items: "inserttable | cell row column | advtablesort | tableprops deletetable" },
 					help: { title: "Help", items: "help" },
 				},
+				font_size_formats: font_size_formats,
+				fontfamily: fontfamily,
+				font_family_formats: fontfamily,
 				relative_urls: relative_urls,
 				remove_script_host: remove_script_host,
 				convert_urls: convert_urls,
@@ -116,6 +125,8 @@ export default function tinyeditor({
 				image_advtab: image_advtab,
 				image_description: image_description,
 				image_class_list: image_class_list,
+				license_key: license_key,
+
 				...custom_configs,
 
 				setup: function (editor) {
@@ -179,3 +190,4 @@ export default function tinyeditor({
 		},
 	};
 }
+

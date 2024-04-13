@@ -25,23 +25,23 @@
 			plugins: '{{ $getPlugins() }}',
 			toolbar: '{{ $getToolbar() }}',
 			language: '{{ $getInterfaceLanguage() }}',
-			language_url: 'https://cdn.jsdelivr.net/npm/tinymce-i18n@23.10.9/langs6/{{ $getInterfaceLanguage() }}.min.js',
+			language_url: '{{ $getLanguageURL($getInterfaceLanguage()) }}',
 			directionality: '{{ $getDirection() }}',
 			max_height: {{ $getMaxHeight() }},
 			min_height: {{ $getMinHeight() }},
-			@if($darkMode() == 'media')
+			@if(!filament()->hasDarkModeForced() && $darkMode() == 'media')
 			skin: (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'oxide-dark' : 'oxide'),
 			content_css: (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'default'),
-			@elseif($darkMode() == 'class')
+			@elseif(!filament()->hasDarkModeForced() && $darkMode() == 'class')
 			skin: (document.querySelector('html').getAttribute('class').includes('dark') ? 'oxide-dark' : 'oxide'),
 			content_css: (document.querySelector('html').getAttribute('class').includes('dark') ? 'dark' : 'default'),
-			@elseif($darkMode() == 'force')
+			@elseif(filament()->hasDarkModeForced() || $darkMode() == 'force')
 			skin: 'oxide-dark',
 			content_css: 'dark',
-			@elseif($darkMode() == false)
+			@elseif(!filament()->hasDarkModeForced() && $darkMode() == false)
 			skin: 'oxide',
 			content_css: 'default',
-			@elseif($darkMode() == 'custom')
+			@elseif(!filament()->hasDarkModeForced() && $darkMode() == 'custom')
 			skin: '{{ $skinsUI() }}',
 			content_css: '{{ $skinsContent() }}',
 			@else
@@ -54,6 +54,8 @@
 			relative_urls: {{ $getRelativeUrls() ? 'true' : 'false' }},
 			remove_script_host: {{ $getRemoveScriptHost() ? 'true' : 'false' }},
 			convert_urls: {{ $getConvertUrls() ? 'true' : 'false' }},
+			font_size_formats: '{{ $getFontSizes() }}',
+			fontfamily: '{{ $getFontFamilies() }}',
 			setup: null,
 			disabled: @js($isDisabled),
 			locale: '{{ app()->getLocale() }}',
@@ -62,7 +64,8 @@
 			image_advtab: @js($imageAdvtab()),
 			image_description: @js($imageDescription()),
 			image_class_list: {!! $getImageClassList() !!},
-			custom_configs: @js($getCustomConfigs())
+			license_key: '{{ $getLicenseKey() }}',
+			custom_configs: '{{ $getCustomConfigs() }}',
 		})"
     >
         @unless($isDisabled())
