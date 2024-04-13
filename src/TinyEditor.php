@@ -42,9 +42,17 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
     protected bool $imageAdvtab = false;
     protected bool $imageDescription = true;
 
+    protected string $tiny;
+    protected string $languageVersion;
+    protected string $languagePackage;
+
     protected function setUp(): void
     {
         parent::setUp();
+
+        $this->tiny = Tiny::version();
+        $this->languageVersion = Tiny::languageVersion();
+        $this->languagePackage = Tiny::languagePackage();
 
         $this->language = app()->getLocale();
         $this->direction = config('filament-tinyeditor.direction', 'ltr');
@@ -83,9 +91,9 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
             $plugins = config('filament-tinyeditor.profiles.' . $this->profile . '.plugins');
         }
 
-        if (! Str::contains($this->templates, 'template')) {
-            $plugins .= ' template';
-        }
+        // if (! Str::contains($this->templates, 'template')) {
+        //     $plugins .= ' template';
+        // }
 
         return $plugins;
     }
@@ -175,7 +183,12 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
             'ug' => 'ug',
             'uk' => 'uk',
             'vi' => 'vi',
-            'zh' => 'zh_CN',
+            'zh' => 'zh-Hans',
+            'zh-CN' => 'zh-Hans',
+            'zh-TW' => 'zh-Hant',
+            'zh-HK' => 'zh_HK',
+            'zh-MO' => 'zh_MO',
+            'zh-SG' => 'zh_SG',
             default => 'en',
         };
     }
@@ -237,6 +250,11 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
             'uk' => 'tinymce-lang-uk',
             'vi' => 'tinymce-lang-vi',
             'zh' => 'tinymce-lang-zh_CN',
+            'zh-cn' => 'tinymce-lang-zh_CN',
+            'zh-tw' => 'tinymce-lang-zh_TW',
+            'zh-hk' => 'tinymce-lang-zh_HK',
+            'zh-mo' => 'tinymce-lang-zh_MO',
+            'zh-sg' => 'tinymce-lang-zh_SG',
             default => 'tinymce',
         };
     }
@@ -483,5 +501,25 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
         }
 
         return $this;
+    }
+
+    public function getLanguageURL($lang): string
+    {
+        return Tiny::getLanguageURL($lang);
+    }
+
+    public function getFontSizes(): string
+    {
+        return config('filament-tinyeditor.extra.toolbar.fontsize', '');
+    }
+
+    public function getFontFamilies(): string
+    {
+        return config('filament-tinyeditor.extra.toolbar.fontfamily', '');
+    }
+
+    public function getLicenseKey(): string
+    {
+        return config('filament-tinyeditor.license_key', 'gpl');
     }
 }
