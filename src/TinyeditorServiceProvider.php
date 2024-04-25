@@ -33,6 +33,8 @@ class TinyeditorServiceProvider extends PackageServiceProvider
     {
         $tinyVersion = config('filament-tinyeditor.version.tiny', '6.7.1');
 
+        $tiny_licence_key = config('filament-tinyeditor.version.licence_key', 'no-api-key');
+
         $tiny_languages = Tiny::getLanguages();
 
         $languages = [];
@@ -52,6 +54,11 @@ class TinyeditorServiceProvider extends PackageServiceProvider
         $provider = config('filament-tinyeditor.provider', 'cloud');
 
         $mainJs = 'https://cdn.jsdelivr.net/npm/tinymce@'.$tinyVersion.'/tinymce.js';
+
+        if ($tiny_licence_key != 'no-api-key') {
+            $mainJs = 'https://cdn.tiny.cloud/1/'.$tiny_licence_key.'/tinymce/'.$tinyVersion.'/tinymce.min.js';
+        }
+
         if ($provider == 'vendor') {
             $mainJs = asset('vendor/tinymce/tinymce.min.js');
         }

@@ -7,6 +7,7 @@ return [
             'version' => '23.10.9',
             'package' => 'langs6',
         ],
+        'licence_key' => env('TINY_LICENSE_KEY', 'no-api-key'),
     ],
     'provider' => 'cloud', // cloud|vendor
     // 'direction' => 'rtl',
