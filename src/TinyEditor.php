@@ -308,7 +308,7 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
             return str_replace('"', "'", json_encode(config('filament-tinyeditor.profiles.' . $this->profile . '.custom_configs')));
         }
 
-        return '';
+        return '{}';
     }
 
     public function darkMode(): string | bool
