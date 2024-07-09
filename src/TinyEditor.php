@@ -72,7 +72,7 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
             $toolbar = config('filament-tinyeditor.profiles.' . $this->profile . '.toolbar');
         }
 
-        if (! Str::contains($this->templates, 'template')) {
+        if (!Str::contains($this->templates, 'template')) {
             $toolbar .= ' template';
         }
 
@@ -263,7 +263,7 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
 
     public function getDirection()
     {
-        if (! $this->direction || $this->direction == 'auto') {
+        if (!$this->direction || $this->direction == 'auto') {
             return match ($this->getInterfaceLanguage()) {
                 'ar' => 'rtl',
                 'fa' => 'rtl',
@@ -434,9 +434,13 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
         return $this;
     }
 
-    public function getExternalPlugins(): array
+    public function getExternalPlugins(): string
     {
-        return $this->externalPlugins ?? [];
+        if (config('filament-tinyeditor.profiles.' . $this->profile . '.external_plugins')) {
+            return str_replace('"', "'", json_encode(config('filament-tinyeditor.profiles.' . $this->profile . '.external_plugins')));
+        }
+
+        return '{}';
     }
 
     public function setExternalPlugins(array $plugins): static

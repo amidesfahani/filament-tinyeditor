@@ -3,6 +3,7 @@ export default function tinyeditor({
 	statePath,
 	selector,
 	plugins,
+	external_plugins,
 	toolbar,
 	language = "en",
 	language_url = null,
@@ -14,8 +15,8 @@ export default function tinyeditor({
 	toolbar_sticky = false,
 	templates = "",
 	menubar = false,
-	font_size_formats = '',
-	fontfamily = '',
+	font_size_formats = "",
+	fontfamily = "",
 	relative_urls = true,
 	image_list = null,
 	image_advtab = false,
@@ -44,6 +45,7 @@ export default function tinyeditor({
 		skin: skin,
 		content_css: content_css,
 		plugins: plugins,
+		external_plugins: external_plugins,
 		toolbar: toolbar,
 		toolbar_sticky: toolbar_sticky,
 		templates: templates,
@@ -74,7 +76,10 @@ export default function tinyeditor({
 					this.initEditor(newState);
 				}
 
-				if (this.editor().container && newState !== this.editor().getContent()) {
+				if (
+					this.editor().container &&
+					newState !== this.editor().getContent()
+				) {
 					this.editor().resetContent(newState || "");
 					this.putCursorToEnd();
 				}
@@ -99,6 +104,7 @@ export default function tinyeditor({
 				skin: skin,
 				content_css: content_css,
 				plugins: plugins,
+				external_plugins: external_plugins,
 				toolbar: toolbar,
 				toolbar_sticky: toolbar_sticky,
 				toolbar_sticky_offset: 64,
@@ -106,13 +112,41 @@ export default function tinyeditor({
 				templates: templates,
 				menubar: menubar,
 				menu: {
-					file: { title: "File", items: "newdocument restoredraft | preview | export print | deleteallconversations" },
-					edit: { title: "Edit", items: "undo redo | cut copy paste pastetext | selectall | searchreplace" },
-					view: { title: "View", items: "code | visualaid visualchars visualblocks | spellchecker | preview fullscreen | showcomments" },
-					insert: { title: "Insert", items: "image link media addcomment pageembed template codesample inserttable | charmap emoticons hr | pagebreak nonbreaking anchor tableofcontents | insertdatetime" },
-					format: { title: "Format", items: "bold italic underline strikethrough superscript subscript codeformat | styles blocks fontfamily fontsize align lineheight | forecolor backcolor | language | removeformat" },
-					tools: { title: "Tools", items: "spellchecker spellcheckerlanguage | a11ycheck code wordcount" },
-					table: { title: "Table", items: "inserttable | cell row column | advtablesort | tableprops deletetable" },
+					file: {
+						title: "File",
+						items:
+							"newdocument restoredraft | preview | export print | deleteallconversations",
+					},
+					edit: {
+						title: "Edit",
+						items:
+							"undo redo | cut copy paste pastetext | selectall | searchreplace",
+					},
+					view: {
+						title: "View",
+						items:
+							"code | visualaid visualchars visualblocks | spellchecker | preview fullscreen | showcomments",
+					},
+					insert: {
+						title: "Insert",
+						items:
+							"image link media addcomment pageembed template codesample inserttable | charmap emoticons hr | pagebreak nonbreaking anchor tableofcontents | insertdatetime",
+					},
+					format: {
+						title: "Format",
+						items:
+							"bold italic underline strikethrough superscript subscript codeformat | styles blocks fontfamily fontsize align lineheight | forecolor backcolor | language | removeformat",
+					},
+					tools: {
+						title: "Tools",
+						items:
+							"spellchecker spellcheckerlanguage | a11ycheck code wordcount",
+					},
+					table: {
+						title: "Table",
+						items:
+							"inserttable | cell row column | advtablesort | tableprops deletetable",
+					},
 					help: { title: "Help", items: "help" },
 				},
 				font_size_formats: font_size_formats,
@@ -134,7 +168,12 @@ export default function tinyeditor({
 						window.tinySettingsCopy = [];
 					}
 
-					if (editor.settings && !window.tinySettingsCopy.some((obj) => obj.id === editor.settings.id)) {
+					if (
+						editor.settings &&
+						!window.tinySettingsCopy.some(
+							(obj) => obj.id === editor.settings.id
+						)
+					) {
 						window.tinySettingsCopy.push(editor.settings);
 					}
 
@@ -175,7 +214,13 @@ export default function tinyeditor({
 							progress(e.detail.progress);
 						};
 
-						$wire.upload(`componentFileAttachments.${statePath}`, blobInfo.blob(), finishCallback, errorCallback, progressCallback);
+						$wire.upload(
+							`componentFileAttachments.${statePath}`,
+							blobInfo.blob(),
+							finishCallback,
+							errorCallback,
+							progressCallback
+						);
 					}),
 
 				automatic_uploads: true,

@@ -14,6 +14,7 @@
             statePath: '{{ $statePath }}',
             selector: '#{{ $textareaID }}',
             plugins: '{{ $getPlugins() }}',
+            external_plugins: {{ $getExternalPlugins() }},
             toolbar: '{{ $getToolbar() }}',
             language: '{{ $getInterfaceLanguage() }}',
             language_url: '{{ $getLanguageURL($getInterfaceLanguage()) }}',

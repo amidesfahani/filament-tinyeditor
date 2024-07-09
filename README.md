@@ -13,6 +13,7 @@ composer require amidesfahani/filament-tinyeditor
 ```
 
 Publish assets
+
 ```bash
 php artisan vendor:publish --provider="AmidEsfahani\FilamentTinyEditor\TinyeditorServiceProvider"
 php artisan vendor:publish --provider="AmidEsfahani\FilamentTinyEditor\TinyeditorServiceProvider" --tag="config"
@@ -45,7 +46,6 @@ The plugin will work without publishing the config, but should you need to chang
 php artisan vendor:publish --tag="filament-tinyeditor-config"
 ```
 
-
 ### Profiles / Tools
 
 The package comes with 4 profiles (or toolbars) out of the box. You can also use a pipe `|` to separate tools into groups. The default profile is the full set of tools.
@@ -54,8 +54,16 @@ The package comes with 4 profiles (or toolbars) out of the box. You can also use
 'profiles' => [
     'default' => [
 		'plugins' => 'accordion autoresize codesample directionality advlist link image lists preview pagebreak searchreplace wordcount code fullscreen insertdatetime media table emoticons',
+		// Installing external plugins
+		'external_plugins' => [
+      'paste_from_word' => 'https://unpkg.com/@pangaeatech/tinymce-paste-from-word-plugin@latest/index.js'
+    ],
 		'toolbar' => 'undo redo removeformat | styles | bold italic | rtl ltr | alignjustify alignright aligncenter alignleft | numlist bullist outdent indent | forecolor backcolor | blockquote table toc hr | image link media codesample emoticons | wordcount fullscreen',
 		'upload_directory' => null,
+		// Custom Configs
+		'custom_configs' => [
+      'paste_webkit_styles' => 'color font-size',
+    ]
 	],
 
 	'simple' => [
@@ -80,7 +88,7 @@ The package comes with 4 profiles (or toolbars) out of the box. You can also use
 
 ### RTL Support
 
-In order for things like text align to work properly with RTL languages you 
+In order for things like text align to work properly with RTL languages you
 can switch the `direction` key in the config to 'rtl'.
 
 ```php
@@ -94,10 +102,19 @@ This is the contents your backend page should return if you specify a URL in the
 
 ```json
 [
-  {"title": "Some title 1", "description": "Some desc 1", "content": "My content"},
-  {"title": "Some title 2", "description": "Some desc 2", "content": "My content"}
+	{
+		"title": "Some title 1",
+		"description": "Some desc 1",
+		"content": "My content"
+	},
+	{
+		"title": "Some title 2",
+		"description": "Some desc 2",
+		"content": "My content"
+	}
 ]
 ```
+
 ```php
 TinyEditor::make('contract')
 	->columnSpan('full')
