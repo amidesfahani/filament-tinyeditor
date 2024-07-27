@@ -189,6 +189,20 @@ export default function tinyeditor({
 						}
 					});
 
+                    editor.on("OpenWindow", function(e) {
+                        let target = e.target.container.closest(".fi-modal");
+                        if (target){
+                            target.setAttribute("x-trap.noscroll", "false");
+                        }
+                    });
+
+                    editor.on("CloseWindow", function(e) {
+                        let target = e.target.container.closest(".fi-modal");
+                        if (target){
+                            target.setAttribute("x-trap.noscroll", "isOpen");
+                        }
+                    });
+
 					if (typeof setup === "function") {
 						setup(editor);
 					}
