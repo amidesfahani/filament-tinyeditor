@@ -54,9 +54,13 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
     protected string $skinsUI;
 
     protected string $skinsContent;
-    protected string|\Closure $language;
-    protected string|array|bool $imageList = false;
-    protected string|array|bool $imageClassList = false;
+
+    protected string | \Closure $language;
+
+    protected string | array | bool | \Closure $imageList = false;
+
+    protected string | array | bool $imageClassList = false;
+
     protected bool $imageAdvtab = false;
 
     protected bool $imageDescription = true;
@@ -471,12 +475,8 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
         return $this;
     }
 
-    public function imageList(string|array $list): static
+    public function imageList(string | array | \Closure $list): static
     {
-        if (is_array($list)) {
-            $list = str_replace('"', "'", json_encode($list));
-        }
-
         $this->imageList = $list;
 
         return $this;
@@ -484,10 +484,17 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
 
     public function getImageList(): string | bool
     {
-        if (!$this->imageList) {
+        if (! $this->imageList) {
             return 'false';
         }
-        return $this->imageList;
+
+        if (is_string($this->imageList)) {
+            return $this->imageList;
+        }
+
+        $imageList = $this->evaluate($this->imageList);
+
+        return str_replace('"', "'", json_encode($imageList));
     }
 
     public function imageClassList(string | array $list): static
