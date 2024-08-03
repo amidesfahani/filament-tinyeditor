@@ -18,32 +18,53 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
     use HasExtraInputAttributes;
 
     protected string $view = 'filament-tinyeditor::tiny-editor';
+
     protected string $profile = 'default';
+
     protected bool $isSimple = false;
+
     protected string $direction;
+
     protected int $maxHeight = 0;
+
     protected int $minHeight = 500;
+
     protected int $previewMaxHeight = 0;
+
     protected int $previewMinHeight = 0;
+
     protected string $toolbar;
+
     protected bool $toolbarSticky = false;
+
     protected bool $showMenuBar = false;
+
     protected array $externalPlugins;
+
     protected bool $relativeUrls = false;
+
     protected bool $removeScriptHost = true;
+
     protected bool $convertUrls = true;
+
     protected string $templates = '';
-    protected string|bool $darkMode;
+
+    protected string | bool $darkMode;
+
     protected string $skinsUI;
+
     protected string $skinsContent;
     protected string|\Closure $language;
     protected string|array|bool $imageList = false;
     protected string|array|bool $imageClassList = false;
     protected bool $imageAdvtab = false;
+
     protected bool $imageDescription = true;
 
     protected string $tiny;
+
     protected string $languageVersion;
+
     protected string $languagePackage;
 
     protected function setUp(): void
@@ -72,7 +93,7 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
             $toolbar = config('filament-tinyeditor.profiles.' . $this->profile . '.toolbar');
         }
 
-        if (!Str::contains($this->templates, 'template')) {
+        if (! Str::contains($this->templates, 'template')) {
             $toolbar .= ' template';
         }
 
@@ -263,7 +284,7 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
 
     public function getDirection()
     {
-        if (!$this->direction || $this->direction == 'auto') {
+        if (! $this->direction || $this->direction == 'auto') {
             return match ($this->getInterfaceLanguage()) {
                 'ar' => 'rtl',
                 'fa' => 'rtl',
@@ -461,7 +482,7 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
         return $this;
     }
 
-    public function getImageList(): string|bool
+    public function getImageList(): string | bool
     {
         if (!$this->imageList) {
             return 'false';
@@ -469,7 +490,7 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
         return $this->imageList;
     }
 
-    public function imageClassList(string|array $list): static
+    public function imageClassList(string | array $list): static
     {
         if (is_array($list)) {
             $list = str_replace('"', "'", json_encode($list));
@@ -480,11 +501,12 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
         return $this;
     }
 
-    public function getImageClassList(): string|bool
+    public function getImageClassList(): string | bool
     {
-        if (!$this->imageClassList) {
+        if (! $this->imageClassList) {
             return 'false';
         }
+
         return $this->imageClassList;
     }
 
