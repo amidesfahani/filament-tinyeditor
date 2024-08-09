@@ -487,7 +487,7 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
     public function getImageList(): string | bool
     {
         if (! $this->imageList) {
-            return 'false';
+            return config('filament-tinyeditor.profiles.' . $this->profile . '.image_list') ?? 'false';
         }
 
         if (is_string($this->imageList)) {
@@ -552,7 +552,7 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
     {
 
         if (! $this->imagesUploadUrl) {
-            return 'false';
+            return config('filament-tinyeditor.profiles.' . $this->profile . '.images_upload_url') ?? 'false';
         }
 
         return $this->evaluate($this->imagesUploadUrl);
