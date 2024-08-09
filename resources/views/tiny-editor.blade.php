@@ -62,7 +62,7 @@
         images_upload_url: '{{ $getImagesUploadUrl() }}',
       @endif
       image_advtab: @js($imageAdvtab()),
-      image_description: @js($imageDescription()),
+      image_description: @js($getImageDescription()),
       image_class_list: {!! $getImageClassList() !!},
       license_key: '{{ $getLicenseKey() }}',
       custom_configs: {{ $getCustomConfigs() }},

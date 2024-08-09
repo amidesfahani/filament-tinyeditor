@@ -524,9 +524,16 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
         return $this->imageAdvtab ?? false;
     }
 
-    public function imageDescription(): bool
+    public function imageDescription(bool $imageDescription): static
     {
-        return $this->imageDescription ?? true;
+        $this->imageDescription = $imageDescription;
+
+        return $this;
+    }
+
+    public function getImageDescription(): bool
+    {
+        return config('filament-tinyeditor.profiles.' . $this->profile . '.image_description') ?? $this->imageDescription;
     }
 
     public function options(array $options): static
