@@ -18,32 +18,59 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
     use HasExtraInputAttributes;
 
     protected string $view = 'filament-tinyeditor::tiny-editor';
+
     protected string $profile = 'default';
+
     protected bool $isSimple = false;
+
     protected string $direction;
+
     protected int $maxHeight = 0;
+
     protected int $minHeight = 500;
+
     protected int $previewMaxHeight = 0;
+
     protected int $previewMinHeight = 0;
+
     protected string $toolbar;
+
     protected bool $toolbarSticky = false;
+
     protected bool $showMenuBar = false;
+
     protected array $externalPlugins;
+
     protected bool $relativeUrls = false;
+
     protected bool $removeScriptHost = true;
+
     protected bool $convertUrls = true;
+
     protected string $templates = '';
-    protected string|bool $darkMode;
+
+    protected string | bool $darkMode;
+
     protected string $skinsUI;
+
     protected string $skinsContent;
-    protected string|\Closure $language;
-    protected string|array|bool $imageList = false;
-    protected string|array|bool $imageClassList = false;
+
+    protected string | \Closure $language;
+
+    protected string | array | bool | \Closure $imageList = false;
+
+    protected string | array | bool $imageClassList = false;
+
     protected bool $imageAdvtab = false;
+
     protected bool $imageDescription = true;
 
+    protected string | bool | \Closure $imagesUploadUrl = false;
+
     protected string $tiny;
+
     protected string $languageVersion;
+
     protected string $languagePackage;
 
     protected function setUp(): void
@@ -72,7 +99,7 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
             $toolbar = config('filament-tinyeditor.profiles.' . $this->profile . '.toolbar');
         }
 
-        if (!Str::contains($this->templates, 'template')) {
+        if (! Str::contains($this->templates, 'template')) {
             $toolbar .= ' template';
         }
 
@@ -263,7 +290,7 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
 
     public function getDirection()
     {
-        if (!$this->direction || $this->direction == 'auto') {
+        if (! $this->direction || $this->direction == 'auto') {
             return match ($this->getInterfaceLanguage()) {
                 'ar' => 'rtl',
                 'fa' => 'rtl',
@@ -450,26 +477,29 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
         return $this;
     }
 
-    public function imageList(string|array $list): static
+    public function imageList(string | array | \Closure $list): static
     {
-        if (is_array($list)) {
-            $list = str_replace('"', "'", json_encode($list));
-        }
-
         $this->imageList = $list;
 
         return $this;
     }
 
-    public function getImageList(): string|bool
+    public function getImageList(): string | bool
     {
-        if (!$this->imageList) {
-            return 'false';
+        if (! $this->imageList) {
+            return config('filament-tinyeditor.profiles.' . $this->profile . '.image_list') ?? 'false';
         }
-        return $this->imageList;
+
+        if (is_string($this->imageList)) {
+            return $this->imageList;
+        }
+
+        $imageList = $this->evaluate($this->imageList);
+
+        return str_replace('"', "'", json_encode($imageList));
     }
 
-    public function imageClassList(string|array $list): static
+    public function imageClassList(string | array $list): static
     {
         if (is_array($list)) {
             $list = str_replace('"', "'", json_encode($list));
@@ -480,11 +510,12 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
         return $this;
     }
 
-    public function getImageClassList(): string|bool
+    public function getImageClassList(): string | bool
     {
-        if (!$this->imageClassList) {
+        if (! $this->imageClassList) {
             return 'false';
         }
+
         return $this->imageClassList;
     }
 
@@ -493,9 +524,16 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
         return $this->imageAdvtab ?? false;
     }
 
-    public function imageDescription(): bool
+    public function imageDescription(bool $imageDescription): static
     {
-        return $this->imageDescription ?? true;
+        $this->imageDescription = $imageDescription;
+
+        return $this;
+    }
+
+    public function getImageDescription(): bool
+    {
+        return config('filament-tinyeditor.profiles.' . $this->profile . '.image_description') ?? $this->imageDescription;
     }
 
     public function options(array $options): static
@@ -507,6 +545,24 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
         }
 
         return $this;
+    }
+
+    public function imagesUploadUrl(string | \Closure $url): static
+    {
+        $this->imagesUploadUrl = $url;
+
+        return $this;
+
+    }
+
+    public function getImagesUploadUrl(): string | bool
+    {
+
+        if (! $this->imagesUploadUrl) {
+            return config('filament-tinyeditor.profiles.' . $this->profile . '.images_upload_url') ?? 'false';
+        }
+
+        return $this->evaluate($this->imagesUploadUrl);
     }
 
     public function getLanguageURL($lang): string
