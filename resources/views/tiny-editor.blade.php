@@ -15,57 +15,57 @@
     x-load-css="[@js(\Filament\Support\Facades\FilamentAsset::getStyleHref('tiny-css', package: 'amidesfahani/filament-tinyeditor'))]"
     x-load-js="[@js(\Filament\Support\Facades\FilamentAsset::getScriptSrc($getLanguageId(), package: 'amidesfahani/filament-tinyeditor'))]"
     x-data="tinyeditor({
-    state: $wire.{{ $applyStateBindingModifiers("entangle('{$statePath}')", isOptimisticallyLive: false) }},
-    statePath: '{{ $statePath }}',
-    selector: '#{{ $textareaID }}',
-    plugins: '{{ $getPlugins() }}',
-    external_plugins: {{ $getExternalPlugins() }},
-    toolbar: '{{ $getToolbar() }}',
-    language: '{{ $getInterfaceLanguage() }}',
-    language_url: '{{ $getLanguageURL($getInterfaceLanguage()) }}',
-    directionality: '{{ $getDirection() }}',
-    max_height: {{ $getMaxHeight() }},
-    min_height: {{ $getMinHeight() }},
-    @if (!filament()->hasDarkModeForced() && $darkMode() == 'media')
-      skin: (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'oxide-dark' : 'oxide'),
-      content_css: (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'default'),
-    @elseif(!filament()->hasDarkModeForced() && $darkMode() == 'class')
-      skin: (document.querySelector('html').getAttribute('class').includes('dark') ? 'oxide-dark' : 'oxide'),
-      content_css: (document.querySelector('html').getAttribute('class').includes('dark') ? 'dark' : 'default'),
-    @elseif(filament()->hasDarkModeForced() || $darkMode() == 'force')
-      skin: 'oxide-dark',
-      content_css: 'dark',
-    @elseif(!filament()->hasDarkModeForced() && $darkMode() == false)
-      skin: 'oxide',
-      content_css: 'default',
-    @elseif(!filament()->hasDarkModeForced() && $darkMode() == 'custom')
-      skin: '{{ $skinsUI() }}',
-      content_css: '{{ $skinsContent() }}',
-    @else
-      skin: ((localStorage.getItem('theme') ?? 'system') == 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) ? 'oxide-dark' : 'oxide',
-      content_css: ((localStorage.getItem('theme') ?? 'system') == 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) ? 'dark' : 'default',
-    @endif
-    toolbar_sticky: {{ $getToolbarSticky() ? 'true' : 'false' }},
-    templates: '{{ $getTemplates() }}',
-    menubar: {{ $getShowMenuBar() ? 'true' : 'false' }},
-    relative_urls: {{ $getRelativeUrls() ? 'true' : 'false' }},
-    remove_script_host: {{ $getRemoveScriptHost() ? 'true' : 'false' }},
-    convert_urls: {{ $getConvertUrls() ? 'true' : 'false' }},
-    font_size_formats: '{{ $getFontSizes() }}',
-    fontfamily: '{{ $getFontFamilies() }}',
-    setup: null,
-    disabled: @js($isDisabled),
-    locale: '{{ app()->getLocale() }}',
-    placeholder: @js($getPlaceholder()),
-    image_list: {!! $getImageList() !!},
-    @if ($getImagesUploadUrl !== false)
-      images_upload_url: '{{ $getImagesUploadUrl() }}',
-    @endif
-    image_advtab: @js($imageAdvtab()),
-    image_description: @js($imageDescription()),
-    image_class_list: {!! $getImageClassList() !!},
-    license_key: '{{ $getLicenseKey() }}',
-    custom_configs: {{ $getCustomConfigs() }},
+      state: $wire.{{ $applyStateBindingModifiers("entangle('{$statePath}')", isOptimisticallyLive: false) }},
+      statePath: '{{ $statePath }}',
+      selector: '#{{ $textareaID }}',
+      plugins: '{{ $getPlugins() }}',
+      external_plugins: {{ $getExternalPlugins() }},
+      toolbar: '{{ $getToolbar() }}',
+      language: '{{ $getInterfaceLanguage() }}',
+      language_url: '{{ $getLanguageURL($getInterfaceLanguage()) }}',
+      directionality: '{{ $getDirection() }}',
+      max_height: {{ $getMaxHeight() }},
+      min_height: {{ $getMinHeight() }},
+      @if (!filament()->hasDarkModeForced() && $darkMode() == 'media')
+        skin: (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'oxide-dark' : 'oxide'),
+        content_css: (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'default'),
+      @elseif(!filament()->hasDarkModeForced() && $darkMode() == 'class')
+        skin: (document.querySelector('html').getAttribute('class').includes('dark') ? 'oxide-dark' : 'oxide'),
+        content_css: (document.querySelector('html').getAttribute('class').includes('dark') ? 'dark' : 'default'),
+      @elseif(filament()->hasDarkModeForced() || $darkMode() == 'force')
+        skin: 'oxide-dark',
+        content_css: 'dark',
+      @elseif(!filament()->hasDarkModeForced() && $darkMode() == false)
+        skin: 'oxide',
+        content_css: 'default',
+      @elseif(!filament()->hasDarkModeForced() && $darkMode() == 'custom')
+        skin: '{{ $skinsUI() }}',
+        content_css: '{{ $skinsContent() }}',
+      @else
+        skin: ((localStorage.getItem('theme') ?? 'system') == 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) ? 'oxide-dark' : 'oxide',
+        content_css: ((localStorage.getItem('theme') ?? 'system') == 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) ? 'dark' : 'default',
+      @endif
+      toolbar_sticky: {{ $getToolbarSticky() ? 'true' : 'false' }},
+      templates: '{{ $getTemplates() }}',
+      menubar: {{ $getShowMenuBar() ? 'true' : 'false' }},
+      relative_urls: {{ $getRelativeUrls() ? 'true' : 'false' }},
+      remove_script_host: {{ $getRemoveScriptHost() ? 'true' : 'false' }},
+      convert_urls: {{ $getConvertUrls() ? 'true' : 'false' }},
+      font_size_formats: '{{ $getFontSizes() }}',
+      fontfamily: '{{ $getFontFamilies() }}',
+      setup: null,
+      disabled: @js($isDisabled),
+      locale: '{{ app()->getLocale() }}',
+      placeholder: @js($getPlaceholder()),
+      image_list: {!! $getImageList() !!},
+      @if ($getImagesUploadUrl !== false)
+        images_upload_url: '{{ $getImagesUploadUrl() }}',
+      @endif
+      image_advtab: @js($imageAdvtab()),
+      image_description: @js($imageDescription()),
+      image_class_list: {!! $getImageClassList() !!},
+      license_key: '{{ $getLicenseKey() }}',
+      custom_configs: {{ $getCustomConfigs() }},
     })">
     @unless ($isDisabled())
     <input id="{{ $textareaID }}" type="hidden" x-ref="tinymce" placeholder="{{ $getPlaceholder() }}">
