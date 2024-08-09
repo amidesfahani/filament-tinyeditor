@@ -65,6 +65,8 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
 
     protected bool $imageDescription = true;
 
+    protected string | bool | \Closure $imagesUploadUrl = false;
+
     protected string $tiny;
 
     protected string $languageVersion;
@@ -536,6 +538,24 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
         }
 
         return $this;
+    }
+
+    public function imagesUploadUrl(string | \Closure $url): static
+    {
+        $this->imagesUploadUrl = $url;
+
+        return $this;
+
+    }
+
+    public function getImagesUploadUrl(): string | bool
+    {
+
+        if (! $this->imagesUploadUrl) {
+            return 'false';
+        }
+
+        return $this->evaluate($this->imagesUploadUrl);
     }
 
     public function getLanguageURL($lang): string
