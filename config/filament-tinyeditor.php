@@ -2,10 +2,11 @@
 
 return [
     'version' => [
-        'tiny' => '7.0.1',
+        'tiny' => '7.3.0',
         'language' => [
-            'version' => '23.10.9',
-            'package' => 'langs6',
+            // https://cdn.jsdelivr.net/npm/tinymce-i18n@latest/
+            'version' => '24.7.29',
+            'package' => 'langs7',
         ],
         'licence_key' => env('TINY_LICENSE_KEY', 'no-api-key'),
     ],
@@ -45,7 +46,7 @@ return [
         ],
 
         'full' => [
-            'plugins' => 'accordion autoresize codesample directionality advlist autolink link image lists charmap preview anchor pagebreak searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media table emoticons template help',
+            'plugins' => 'accordion autoresize codesample directionality advlist autolink link image lists charmap preview anchor pagebreak searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media table emoticons help',
             'toolbar' => 'undo redo removeformat | fontfamily fontsize fontsizeinput font_size_formats styles | bold italic underline | rtl ltr | alignjustify alignright aligncenter alignleft | numlist bullist outdent indent accordion | forecolor backcolor | blockquote table toc hr | image link anchor media codesample emoticons | visualblocks print preview wordcount fullscreen help',
             'upload_directory' => null,
         ],
@@ -55,8 +56,8 @@ return [
      * this option will load optional language file based on you app locale
      * example:
      * languages => [
-     *      'fa' => 'https://cdn.jsdelivr.net/npm/tinymce-i18n@23.10.9/langs6/fa.min.js',
-     *      'es' => 'https://cdn.jsdelivr.net/npm/tinymce-i18n@23.10.9/langs6/es.min.js',
+     *      'fa' => 'https://cdn.jsdelivr.net/npm/tinymce-i18n@24.7.29/langs7/fa.min.js',
+     *      'es' => 'https://cdn.jsdelivr.net/npm/tinymce-i18n@24.7.29/langs7/es.min.js',
      *      'ja' => asset('assets/ja.min.js')
      * ]
      */
