@@ -659,7 +659,7 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
     public function getImagesUploadUrl(): string | bool
     {
         if (! $this->imagesUploadUrl) {
-            return config('filament-tinyeditor.profiles.' . $this->profile . '.images_upload_url') ?? 'false';
+            return config('filament-tinyeditor.profiles.' . $this->profile . '.images_upload_url') ?? '';
         }
 
         return $this->evaluate($this->imagesUploadUrl);

@@ -262,9 +262,6 @@ export default function tinyeditor({
 
 				automatic_uploads: true,
 			};
-
-			console.log(tinyConfig);
-
 			tinymce.init(tinyConfig);
 		},
 		updateEditorContent(content) {

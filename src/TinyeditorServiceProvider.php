@@ -14,7 +14,7 @@ class TinyeditorServiceProvider extends PackageServiceProvider
 {
     public function configurePackage(Package $package): void
     {
-        $package->name('filament-tinyeditor')->hasConfigFile()->hasViews()
+        $package->name('filament-tinyeditor')->hasConfigFile()->hasViews()->hasAssets()
             ->hasInstallCommand(
                 function (InstallCommand $command) {
                     $command->publishConfigFile()->copyAndRegisterServiceProviderInApp()->askToStarRepoOnGitHub($this->getAssetPackageName());
@@ -29,7 +29,7 @@ class TinyeditorServiceProvider extends PackageServiceProvider
         }
     }
 
-    public function packageBooted(): void
+    public function packageRegistered(): void
     {
         $tinyVersion = config('filament-tinyeditor.version.tiny', '7.3.0');
 
