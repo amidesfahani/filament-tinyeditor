@@ -37,7 +37,6 @@
             @if ($getMinWidth())
             min_width: {{ $getMinWidth() }},
             @endif
-
             resize: {{ $getResize() }},
             @if (!filament()->hasDarkModeForced() && $darkMode() == 'media') skin: (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'oxide-dark' : 'oxide'),
 			content_css: (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'default'),
@@ -54,8 +53,9 @@
 			skin: '{{ $skinsUI() }}',
 			content_css: '{{ $skinsContent() }}',
 			@else
-			skin: ((localStorage.getItem('theme') ?? 'system') == 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) ? 'oxide-dark' : 'oxide',
-			content_css: ((localStorage.getItem('theme') ?? 'system') == 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) ? 'dark' : 'default', @endif
+			skin: ((localStorage.getItem('theme') ?? 'system') == 'dark' || (localStorage.getItem('theme') === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) ? 'oxide-dark' : 'oxide',
+			content_css: ((localStorage.getItem('theme') ?? 'system') == 'dark' || (localStorage.getItem('theme') === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) ? 'dark' : 'default',
+            @endif
             toolbar_sticky: {{ $getToolbarSticky() ? 'true' : 'false' }},
             toolbar_sticky_offset: {{ $getToolbarStickyOffset() }},
             toolbar_mode: '{{ $getToolbarMode() }}',
@@ -74,21 +74,21 @@
             placeholder: @js($getPlaceholder()),
             image_list: {!! $getImageList() !!},
             @if ($getImagesUploadUrl !== false)
-            images_upload_url: '{{ $getImagesUploadUrl() }}',
+            images_upload_url: @js($getImagesUploadUrl()),
             @endif
             image_advtab: @js($imageAdvtab()),
             image_description: @js($getImageDescription()),
             image_class_list: {!! $getImageClassList() !!},
             license_key: '{{ $getLicenseKey() }}',
-            custom_configs: {{ $getCustomConfigs() }},
+            custom_configs: {{ $getCustomConfigs() }}
         })">
-        @unless ($isDisabled())
-            <input id="{{ $textareaID }}" type="hidden" x-ref="tinymce" placeholder="{{ $getPlaceholder() }}">
-        @else
+        @if ($isDisabled())
             <div x-html="state" @style(['max-height: ' . $getPreviewMaxHeight() . 'px' => $getPreviewMaxHeight() > 0, 'min-height: ' . $getPreviewMinHeight() . 'px' => $getPreviewMinHeight() > 0])
                 class="block w-full p-3 overflow-y-auto prose transition duration-75 bg-white border border-gray-300 rounded-lg shadow-sm max-w-none opacity-70 dark:prose-invert dark:border-gray-600 dark:bg-gray-700 dark:text-white">
             </div>
-        @endunless
+        @else
+            <input id="{{ $textareaID }}" type="hidden" x-ref="tinymce" placeholder="{{ $getPlaceholder() }}">
+        @endif
     </div>
 </x-dynamic-component>
 

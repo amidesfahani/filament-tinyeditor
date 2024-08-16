@@ -7,7 +7,6 @@ use Filament\Forms\Components\Concerns\HasExtraInputAttributes;
 use Filament\Forms\Components\Contracts;
 use Filament\Forms\Components\Field;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
-use Illuminate\Support\Str;
 
 class TinyEditor extends Field implements Contracts\CanBeLengthConstrained, Contracts\HasFileAttachments
 {
@@ -659,7 +658,7 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
     public function getImagesUploadUrl(): string | bool
     {
         if (! $this->imagesUploadUrl) {
-            return config('filament-tinyeditor.profiles.' . $this->profile . '.images_upload_url') ?? 'false';
+            return config('filament-tinyeditor.profiles.' . $this->profile . '.images_upload_url') ?? '';
         }
 
         return $this->evaluate($this->imagesUploadUrl);
