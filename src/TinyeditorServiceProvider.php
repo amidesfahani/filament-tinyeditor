@@ -31,7 +31,7 @@ class TinyeditorServiceProvider extends PackageServiceProvider
 
     public function packageBooted(): void
     {
-        $tinyVersion = config('filament-tinyeditor.version.tiny', '6.7.1');
+        $tinyVersion = config('filament-tinyeditor.version.tiny', '7.3.0');
 
         $tiny_licence_key = config('filament-tinyeditor.version.licence_key', 'no-api-key');
 

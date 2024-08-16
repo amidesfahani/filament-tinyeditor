@@ -6,17 +6,17 @@ class Tiny
 {
 	public static function version()
 	{
-		return config('filament-tinyeditor.version.tiny', '7.0.1');
+		return config('filament-tinyeditor.version.tiny', '7.3.0');
 	}
 
 	public static function languageVersion()
 	{
-		return config('filament-tinyeditor.version.language.version', '23.10.9');
+		return config('filament-tinyeditor.version.language.version', '24.7.29');
 	}
 
 	public static function languagePackage()
 	{
-		return config('filament-tinyeditor.version.language.package', 'langs6');
+		return config('filament-tinyeditor.version.language.package', 'langs7');
 	}
 
 	public static array $languages = [

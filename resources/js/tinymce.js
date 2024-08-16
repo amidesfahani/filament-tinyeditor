@@ -8,12 +8,21 @@ export default function tinyeditor({
 	language = "en",
 	language_url = null,
 	directionality = "ltr",
+	height = null,
 	max_height = 0,
-	min_height = 500,
+	min_height = 100,
+	width = null,
+	max_width = 0,
+	min_width = 400,
+	resize = false,
 	skin = "oxide",
 	content_css = "default",
-	toolbar_sticky = false,
-	templates = "",
+	toolbar_sticky = true,
+	toolbar_sticky_offset = 64,
+	toolbar_mode = 'sliding',
+	toolbar_location = 'auto',
+	inline = false,
+	toolbar_persist = false,
 	menubar = false,
 	font_size_formats = "",
 	fontfamily = "",
@@ -21,7 +30,8 @@ export default function tinyeditor({
 	image_list = null,
 	image_advtab = false,
 	image_description = false,
-	image_class_list = null,
+	image_class_list = [],
+	images_upload_url = null,
 	remove_script_host = true,
 	convert_urls = true,
 	custom_configs = {},
@@ -40,15 +50,19 @@ export default function tinyeditor({
 		language: language,
 		language_url: language_url,
 		directionality: directionality,
+		height: height,
 		max_height: max_height,
 		min_height: min_height,
+		width: width,
+		max_width: max_width,
+		min_width: min_width,
+		resize: resize,
 		skin: skin,
 		content_css: content_css,
 		plugins: plugins,
 		external_plugins: external_plugins,
 		toolbar: toolbar,
 		toolbar_sticky: toolbar_sticky,
-		templates: templates,
 		menubar: menubar,
 		relative_urls: relative_urls,
 		remove_script_host: remove_script_host,
@@ -60,6 +74,7 @@ export default function tinyeditor({
 		image_advtab: image_advtab,
 		image_description: image_description,
 		image_class_list: image_class_list,
+		images_upload_url: images_upload_url,
 		license_key: license_key,
 		custom_configs: custom_configs,
 		updatedAt: Date.now(),
@@ -92,24 +107,31 @@ export default function tinyeditor({
 			let _this = this;
 			let $wire = this.$wire;
 
-			tinymce.init({
+			const tinyConfig = {
 				selector: selector,
 				language: language,
 				language_url: language_url,
 				directionality: directionality,
 				statusbar: false,
 				promotion: false,
+				height: height,
 				max_height: max_height,
 				min_height: min_height,
+				width: width,
+				max_width: max_width,
+				min_width: min_width,
+				resize: resize,
 				skin: skin,
 				content_css: content_css,
 				plugins: plugins,
 				external_plugins: external_plugins,
 				toolbar: toolbar,
 				toolbar_sticky: toolbar_sticky,
-				toolbar_sticky_offset: 64,
-				toolbar_mode: "sliding",
-				templates: templates,
+				toolbar_sticky_offset: toolbar_sticky_offset,
+				toolbar_mode: toolbar_mode,
+				toolbar_location: toolbar_location,
+				inline: inline,
+  				toolbar_persist: toolbar_persist,
 				menubar: menubar,
 				menu: {
 					file: {
@@ -130,7 +152,7 @@ export default function tinyeditor({
 					insert: {
 						title: "Insert",
 						items:
-							"image link media addcomment pageembed template codesample inserttable | charmap emoticons hr | pagebreak nonbreaking anchor tableofcontents | insertdatetime",
+							"image link media addcomment pageembed codesample inserttable | charmap emoticons hr | pagebreak nonbreaking anchor tableofcontents | insertdatetime",
 					},
 					format: {
 						title: "Format",
@@ -159,6 +181,7 @@ export default function tinyeditor({
 				image_advtab: image_advtab,
 				image_description: image_description,
 				image_class_list: image_class_list,
+				images_upload_url: images_upload_url,
 				license_key: license_key,
 
 				...custom_configs,
@@ -238,7 +261,11 @@ export default function tinyeditor({
 					}),
 
 				automatic_uploads: true,
-			});
+			};
+
+			console.log(tinyConfig);
+
+			tinymce.init(tinyConfig);
 		},
 		updateEditorContent(content) {
 			this.editor().setContent(content);

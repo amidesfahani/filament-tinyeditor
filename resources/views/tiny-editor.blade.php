@@ -19,8 +19,26 @@
             language: '{{ $getInterfaceLanguage() }}',
             language_url: '{{ $getLanguageURL($getInterfaceLanguage()) }}',
             directionality: '{{ $getDirection() }}',
+            @if ($getHeight())
+            height: {{ $getHeight() }},
+            @endif
+            @if ($getMaxHeight())
             max_height: {{ $getMaxHeight() }},
+            @endif
+            @if ($getMinHeight())
             min_height: {{ $getMinHeight() }},
+            @endif
+            @if ($getWidth())
+            width: {{ $getWidth() }},
+            @endif
+            @if ($getTinyMaxWidth())
+            max_width: {{ $getTinyMaxWidth() }},
+            @endif
+            @if ($getMinWidth())
+            min_width: {{ $getMinWidth() }},
+            @endif
+
+            resize: {{ $getResize() }},
             @if (!filament()->hasDarkModeForced() && $darkMode() == 'media') skin: (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'oxide-dark' : 'oxide'),
 			content_css: (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'default'),
 			@elseif(!filament()->hasDarkModeForced() && $darkMode() == 'class')
@@ -39,7 +57,11 @@
 			skin: ((localStorage.getItem('theme') ?? 'system') == 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) ? 'oxide-dark' : 'oxide',
 			content_css: ((localStorage.getItem('theme') ?? 'system') == 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) ? 'dark' : 'default', @endif
             toolbar_sticky: {{ $getToolbarSticky() ? 'true' : 'false' }},
-            templates: '{{ $getTemplates() }}',
+            toolbar_sticky_offset: {{ $getToolbarStickyOffset() }},
+            toolbar_mode: '{{ $getToolbarMode() }}',
+            toolbar_location: '{{ $getToolbarLocation() }}',
+            inline: {{ $getInlineOption() ? 'true' : 'false' }},
+            toolbar_persist: {{ $getToolbarPersist() ? 'true' : 'false' }},
             menubar: {{ $getShowMenuBar() ? 'true' : 'false' }},
             relative_urls: {{ $getRelativeUrls() ? 'true' : 'false' }},
             remove_script_host: {{ $getRemoveScriptHost() ? 'true' : 'false' }},
@@ -51,8 +73,11 @@
             locale: '{{ app()->getLocale() }}',
             placeholder: @js($getPlaceholder()),
             image_list: {!! $getImageList() !!},
+            @if ($getImagesUploadUrl !== false)
+            images_upload_url: '{{ $getImagesUploadUrl() }}',
+            @endif
             image_advtab: @js($imageAdvtab()),
-            image_description: @js($imageDescription()),
+            image_description: @js($getImageDescription()),
             image_class_list: {!! $getImageClassList() !!},
             license_key: '{{ $getLicenseKey() }}',
             custom_configs: {{ $getCustomConfigs() }},

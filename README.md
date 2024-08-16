@@ -34,6 +34,7 @@ TinyEditor::make('content')
 	->fileAttachmentsDirectory('uploads')
     ->profile('default|simple|full|minimal|none|custom')
 	->rtl() // Set RTL or use ->direction('auto|rtl|ltr')
+	->resize('both')
 	->columnSpan('full')
     ->required();
 ```
@@ -56,13 +57,13 @@ The package comes with 4 profiles (or toolbars) out of the box. You can also use
 		'plugins' => 'accordion autoresize codesample directionality advlist link image lists preview pagebreak searchreplace wordcount code fullscreen insertdatetime media table emoticons',
 		// Installing external plugins
 		'external_plugins' => [
-      'paste_from_word' => 'https://unpkg.com/@pangaeatech/tinymce-paste-from-word-plugin@latest/index.js'
+		'paste_from_word' => 'https://unpkg.com/@pangaeatech/tinymce-paste-from-word-plugin@latest/index.js'
     ],
 		'toolbar' => 'undo redo removeformat | styles | bold italic | rtl ltr | alignjustify alignright aligncenter alignleft | numlist bullist outdent indent | forecolor backcolor | blockquote table toc hr | image link media codesample emoticons | wordcount fullscreen',
 		'upload_directory' => null,
 		// Custom Configs
 		'custom_configs' => [
-      'paste_webkit_styles' => 'color font-size',
+		'paste_webkit_styles' => 'color font-size',
     ]
 	],
 
@@ -94,32 +95,6 @@ can switch the `direction` key in the config to 'rtl'.
 ```php
 // config/filament-tinyeditor.php
 'direction' => 'rtl'
-```
-
-### Template Plugin Examples (external template list)
-
-This is the contents your backend page should return if you specify a URL in the templates option. A simple array containing each template to present. This URL can be a backend page, for example a PHP file.
-
-```json
-[
-	{
-		"title": "Some title 1",
-		"description": "Some desc 1",
-		"content": "My content"
-	},
-	{
-		"title": "Some title 2",
-		"description": "Some desc 2",
-		"content": "My content"
-	}
-]
-```
-
-```php
-TinyEditor::make('contract')
-	->columnSpan('full')
-	->templates(route('my_template_route_name'))
-    ->required();
 ```
 
 ## Versioning
