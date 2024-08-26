@@ -623,10 +623,10 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
         return $this;
     }
 
-    public function getImageClassList(): string|bool
+    public function getImageClassList(): ?string
     {
         if (!$this->imageClassList) {
-            return '[]';
+            return null;
         }
         return $this->imageClassList;
     }
