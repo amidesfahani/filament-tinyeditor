@@ -20,24 +20,24 @@
             language_url: '{{ $getLanguageURL($getInterfaceLanguage()) }}',
             directionality: '{{ $getDirection() }}',
             @if ($getHeight())
-            height: {{ $getHeight() }},
+            height: @js($getHeight()),
             @endif
             @if ($getMaxHeight())
-            max_height: {{ $getMaxHeight() }},
+            max_height: @js($getMaxHeight()),
             @endif
             @if ($getMinHeight())
-            min_height: {{ $getMinHeight() }},
+            min_height: @js($getMinHeight()),
             @endif
             @if ($getWidth())
-            width: {{ $getWidth() }},
+            width: @js($getWidth()),
             @endif
             @if ($getTinyMaxWidth())
-            max_width: {{ $getTinyMaxWidth() }},
+            max_width: @js($getTinyMaxWidth()),
             @endif
             @if ($getMinWidth())
-            min_width: {{ $getMinWidth() }},
+            min_width: @js($getMinWidth()),
             @endif
-            resize: {{ $getResize() }},
+            resize: @js($getResize()),
             @if (!filament()->hasDarkModeForced() && $darkMode() == 'media') skin: (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'oxide-dark' : 'oxide'),
 			content_css: (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'default'),
 			@elseif(!filament()->hasDarkModeForced() && $darkMode() == 'class')
@@ -78,7 +78,7 @@
             @endif
             image_advtab: @js($imageAdvtab()),
             image_description: @js($getImageDescription()),
-            image_class_list: {!! $getImageClassList() !!},
+            image_class_list: @js($getImageClassList()),
             license_key: '{{ $getLicenseKey() }}',
             custom_configs: {{ $getCustomConfigs() }}
         })">

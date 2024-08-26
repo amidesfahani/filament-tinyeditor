@@ -30,8 +30,9 @@ export default function tinyeditor({
 	image_list = null,
 	image_advtab = false,
 	image_description = false,
-	image_class_list = [],
+	image_class_list = null,
 	images_upload_url = null,
+	images_upload_base_path = null,
 	remove_script_host = true,
 	convert_urls = true,
 	custom_configs = {},
@@ -75,6 +76,7 @@ export default function tinyeditor({
 		image_description: image_description,
 		image_class_list: image_class_list,
 		images_upload_url: images_upload_url,
+		images_upload_base_path: images_upload_base_path,
 		license_key: license_key,
 		custom_configs: custom_configs,
 		updatedAt: Date.now(),
@@ -182,6 +184,7 @@ export default function tinyeditor({
 				image_description: image_description,
 				image_class_list: image_class_list,
 				images_upload_url: images_upload_url,
+				images_upload_base_path: images_upload_base_path,
 				license_key: license_key,
 
 				...custom_configs,
@@ -232,16 +235,23 @@ export default function tinyeditor({
 				},
 
 				images_upload_handler: (blobInfo, progress) =>
-					new Promise((resolve, reject) => {
+					new Promise((success, failure) => {
 						if (!blobInfo.blob()) return;
+
+						const pathJoin = (path1, path2) => {
+							if (path1) {
+							  return path1.replace(/\/$/, '') + '/' + path2.replace(/^\//, '');
+							}
+							return path2;
+						};
 
 						const finishCallback = () => {
 							$wire.getFormComponentFileAttachmentUrl(statePath).then((url) => {
 								if (!url) {
-									reject("error");
+									failure("Image upload failed");
 									return;
 								}
-								resolve(url);
+								success(pathJoin(images_upload_base_path, url));
 							});
 						};
 
