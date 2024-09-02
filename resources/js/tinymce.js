@@ -83,23 +83,25 @@ export default function tinyeditor({
 		disabled,
 		locale: locale,
 		init() {
+			this.delete();
+
 			this.initEditor(state.initialValue);
 
 			window.filamentTinyEditors = editors;
 
 			this.$watch("state", (newState, oldState) => {
-				if (newState === "<p></p>" && newState !== this.editor().getContent()) {
-					editors[this.statePath].destroy();
+				if (newState === "<p></p>" && newState !== this.editor()?.getContent()) {
+					this.delete();
 					this.initEditor(newState);
 				}
 
 				if (
-					this.editor().container &&
-					newState !== this.editor().getContent()
+					this.editor()?.container &&
+					newState !== this.editor()?.getContent()
 				) {
-					this.editor().resetContent(newState || "");
+					this.updateEditorContent(newState || "");
 					this.putCursorToEnd();
-				}
+			}
 			});
 		},
 		editor() {
@@ -133,7 +135,7 @@ export default function tinyeditor({
 				toolbar_mode: toolbar_mode,
 				toolbar_location: toolbar_location,
 				inline: inline,
-  				toolbar_persist: toolbar_persist,
+				toolbar_persist: toolbar_persist,
 				menubar: menubar,
 				menu: {
 					file: {
@@ -208,6 +210,11 @@ export default function tinyeditor({
 						_this.state = editor.getContent();
 					});
 
+					editor.on("change", function (e) {
+						_this.updatedAt = Date.now();
+						_this.state = editor.getContent();
+					});
+
 					editor.on("init", function (e) {
 						editors[_this.statePath] = editor.id;
 						if (content != null) {
@@ -215,19 +222,19 @@ export default function tinyeditor({
 						}
 					});
 
-                    editor.on("OpenWindow", function(e) {
-                        let target = e.target.container.closest(".fi-modal");
-                        if (target){
-                            target.setAttribute("x-trap.noscroll", "false");
-                        }
-                    });
+					editor.on("OpenWindow", function(e) {
+						let target = e.target.container.closest(".fi-modal");
+						if (target){
+							target.setAttribute("x-trap.noscroll", "false");
+						}
+					});
 
-                    editor.on("CloseWindow", function(e) {
-                        let target = e.target.container.closest(".fi-modal");
-                        if (target){
-                            target.setAttribute("x-trap.noscroll", "isOpen");
-                        }
-                    });
+					editor.on("CloseWindow", function(e) {
+						let target = e.target.container.closest(".fi-modal");
+						if (target){
+							target.setAttribute("x-trap.noscroll", "isOpen");
+						}
+					});
 
 					if (typeof setup === "function") {
 						setup(editor);
@@ -281,5 +288,11 @@ export default function tinyeditor({
 			this.editor().selection.select(this.editor().getBody(), true);
 			this.editor().selection.collapse(false);
 		},
+		delete()	{
+			if (editors[this.statePath]) {
+				this.editor().destroy();
+				delete	editors[this.statePath];
+			}
+		}
 	};
 }
