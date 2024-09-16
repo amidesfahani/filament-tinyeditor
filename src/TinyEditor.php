@@ -39,6 +39,7 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
     protected bool $toolbarPersist = false;
     protected bool $showMenuBar = false;
     protected array $externalPlugins;
+    protected array $customConfigs = [];
     protected bool $relativeUrls = false;
     protected bool $removeScriptHost = true;
     protected bool $convertUrls = true;
@@ -84,6 +85,25 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
         }
 
         return $toolbar;
+    }
+
+    public function setCustomConfigs(array $configs): static
+    {
+        $this->customConfigs = $configs;
+
+        return $this;
+    }
+
+    public function getCustomConfigs(): string
+    {
+        $defaultConfigs = config('filament-tinyeditor.profiles.' . $this->profile . '.custom_configs') ?? [];
+        $customConfigs = array_replace_recursive($this->customConfigs, $defaultConfigs);
+
+        if (! empty($customConfigs)) {
+            return str_replace('"', "'", json_encode($customConfigs, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
+        }
+
+        return '{}';
     }
 
     public function getPlugins(): string
