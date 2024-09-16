@@ -39,7 +39,7 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
     protected bool $toolbarPersist = false;
     protected bool $showMenuBar = false;
     protected array $externalPlugins;
-    protected array $customConfigs = [];
+    protected array|\Closure  $customConfigs = [];
     protected bool $relativeUrls = false;
     protected bool $removeScriptHost = true;
     protected bool $convertUrls = true;
@@ -87,7 +87,7 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
         return $toolbar;
     }
 
-    public function setCustomConfigs(array $configs): static
+    public function setCustomConfigs(array|\Closure $configs): static
     {
         $this->customConfigs = $configs;
 
@@ -96,14 +96,16 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
 
     public function getCustomConfigs(): string
     {
-        $defaultConfigs = config('filament-tinyeditor.profiles.' . $this->profile . '.custom_configs') ?? [];
-        $customConfigs = array_replace_recursive($this->customConfigs, $defaultConfigs);
+        $defaultConfigs = config("filament-tinyeditor.profiles.{$this->profile}.custom_configs", []);
+        $customConfigs = $this->evaluate($this->customConfigs) ?? [];
 
-        if (! empty($customConfigs)) {
-            return str_replace('"', "'", json_encode($customConfigs, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
+        $mergedConfigs = array_replace_recursive($customConfigs, $defaultConfigs);
+
+        if (empty($mergedConfigs)) {
+            return '{}';
         }
 
-        return '{}';
+        return str_replace('"', "'", json_encode($mergedConfigs, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
     }
 
     public function getPlugins(): string
@@ -311,15 +313,6 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
         $this->profile = $profile;
 
         return $this;
-    }
-
-    public function getCustomConfigs(): string
-    {
-        if (config('filament-tinyeditor.profiles.' . $this->profile . '.custom_configs')) {
-            return str_replace('"', "'", json_encode(config('filament-tinyeditor.profiles.' . $this->profile . '.custom_configs')));
-        }
-
-        return '{}';
     }
 
     public function darkMode(): string | bool
