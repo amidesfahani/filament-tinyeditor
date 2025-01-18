@@ -41,6 +41,7 @@ export default function tinyeditor({
 	locale = "en",
 	license_key = "gpl",
 	placeholder = null,
+	removeImagesEventCallback = null,
 }) {
 	let editors = window.filamentTinyEditors || {};
 	return {
@@ -82,6 +83,8 @@ export default function tinyeditor({
 		updatedAt: Date.now(),
 		disabled,
 		locale: locale,
+		placeholder: placeholder,
+		removeImagesEventCallback,
 		init() {
 			this.initEditor(state.initialValue);
 
@@ -274,6 +277,70 @@ export default function tinyeditor({
 							progressCallback
 						);
 					}),
+				
+				init_instance_callback: function (editor) {
+					var MutationObserver = window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver;
+
+					var isEnabled = removeImagesEventCallback && typeof removeImagesEventCallback === 'function';
+
+					if (!isEnabled) return;
+				
+					var observer = new MutationObserver(function (mutations, instance) {
+						var addedImages = [];
+				
+						mutations.forEach(function (mutationRecord) {
+							Array.from(mutationRecord.addedNodes).forEach(function (currentNode) {
+								if (currentNode.nodeName === 'IMG' && currentNode.className !== "mce-clonedresizable") {
+									if (addedImages.indexOf(currentNode.src) >= 0) return;
+				
+									addedImages.push(currentNode.getAttribute("src"));
+									return;
+								}
+				
+								var imgs = currentNode.getElementsByTagName('img');
+								Array.from(imgs).forEach(function (img) {
+									if (addedImages.indexOf(img.src) >= 0) return;
+				
+									addedImages.push(img.getAttribute("src"));
+								});
+							});
+						});
+				
+						var removedImages = [];
+				
+						mutations.forEach(function (mutationRecord) {
+							Array.from(mutationRecord.removedNodes).forEach(function (currentNode) {
+								if (currentNode.nodeName === 'IMG' && currentNode.className !== "mce-clonedresizable") {
+									if (removedImages.indexOf(currentNode.src) >= 0) return;
+				
+									removedImages.push(currentNode.getAttribute("src"));
+									return;
+								}
+
+								if (currentNode.nodeType === 1) {
+									var imgs = currentNode.getElementsByTagName('img');
+									Array.from(imgs).forEach(function (img) {
+										if (addedImages.indexOf(img.src) >= 0) return;
+				
+										addedImages.push(img.getAttribute("src"));
+									});
+								}
+							});
+						});
+				
+						removedImages.forEach(function (imageSrc) {
+							if (addedImages.indexOf(imageSrc) >= 0) return;
+							if (removeImagesEventCallback && typeof removeImagesEventCallback === 'function') {
+								removeImagesEventCallback(imageSrc);
+							}
+						});
+					});
+				
+					observer.observe(editor.getBody(), {
+						childList: true,
+						subtree: true
+					});
+				},					
 
 				automatic_uploads: true,
 			};

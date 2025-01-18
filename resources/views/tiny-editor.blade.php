@@ -80,7 +80,12 @@
             image_description: @js($getImageDescription()),
             image_class_list: @js($getImageClassList()),
             license_key: '{{ $getLicenseKey() }}',
-            custom_configs: {{ $getCustomConfigs() }}
+            custom_configs: {{ $getCustomConfigs() }},
+            {{-- removeImagesEventCallback: (img) => {
+                if (confirm('{{ __('Are you sure you want to remove this image?') }}')) {
+                    console.log(img)
+                }
+            }, --}}
         })">
         @if ($isDisabled())
             <div x-html="state" @style(['max-height: ' . $getPreviewMaxHeight() . 'px' => $getPreviewMaxHeight() > 0, 'min-height: ' . $getPreviewMinHeight() . 'px' => $getPreviewMinHeight() > 0])
