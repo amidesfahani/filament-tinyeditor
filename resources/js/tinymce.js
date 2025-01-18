@@ -88,16 +88,15 @@ export default function tinyeditor({
 			window.filamentTinyEditors = editors;
 
 			this.$watch("state", (newState, oldState) => {
-				if (newState === "<p></p>" && newState !== this.editor().getContent()) {
-					editors[this.statePath].destroy();
+				if (newState === "<p></p>" && newState !== this.editor()?.getContent()) {
+					if (this.editor()) {
+						this.editor().destroy();
+					}
 					this.initEditor(newState);
 				}
 
-				if (
-					this.editor().container &&
-					newState !== this.editor().getContent()
-				) {
-					this.editor().resetContent(newState || "");
+				if (this.editor()?.container && newState !== this.editor()?.getContent()) {
+					this.updateEditorContent(newState || "");
 					this.putCursorToEnd();
 				}
 			});
@@ -108,6 +107,12 @@ export default function tinyeditor({
 		initEditor(content) {
 			let _this = this;
 			let $wire = this.$wire;
+
+			const defaultFontFamilyFormats = "Arial=arial,helvetica,sans-serif; Courier New=courier new,courier,monospace; AkrutiKndPadmini=Akpdmi-n";
+    		const fontFamilyFormats = fontfamily || defaultFontFamilyFormats;
+
+			const defaultFontSizeFormats = "8pt 10pt 12pt 14pt 16pt 18pt 24pt 36pt 48pt";
+			const fontSizeFormats = font_size_formats || defaultFontSizeFormats;
 
 			const tinyConfig = {
 				selector: selector,
@@ -173,9 +178,9 @@ export default function tinyeditor({
 					},
 					help: { title: "Help", items: "help" },
 				},
-				font_size_formats: font_size_formats,
-				fontfamily: fontfamily,
-				font_family_formats: fontfamily,
+				font_size_formats: fontSizeFormats,
+				fontfamily: fontFamilyFormats,
+				font_family_formats: fontFamilyFormats,
 				relative_urls: relative_urls,
 				remove_script_host: remove_script_host,
 				convert_urls: convert_urls,
@@ -272,6 +277,7 @@ export default function tinyeditor({
 
 				automatic_uploads: true,
 			};
+
 			tinymce.init(tinyConfig);
 		},
 		updateEditorContent(content) {
