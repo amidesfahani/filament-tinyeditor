@@ -39,7 +39,7 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
     protected bool $toolbarPersist = false;
     protected bool $showMenuBar = false;
     protected array $externalPlugins;
-    protected array|\Closure  $customConfigs = [];
+    protected array|\Closure $customConfigs = [];
     protected bool $relativeUrls = false;
     protected bool $removeScriptHost = true;
     protected bool $convertUrls = true;
@@ -53,6 +53,7 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
     protected bool $imageAdvtab = false;
     protected bool $imageDescription = true;
     protected bool|string $resize = false;
+    protected bool $textPattern = true;
 
     protected string $tiny;
     protected string $languageVersion;
@@ -125,7 +126,7 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
 
     public function isSimple(): bool
     {
-        return (bool) $this->evaluate($this->isSimple);
+        return (bool)$this->evaluate($this->isSimple);
     }
 
     public function getFileAttachmentsDirectory(): ?string
@@ -133,7 +134,7 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
         return filled($directory = $this->evaluate($this->fileAttachmentsDirectory)) ? $directory : config('filament-tinyeditor.profiles.' . $this->profile . '.upload_directory');
     }
 
-    public function language(string | \Closure $language): static
+    public function language(string|\Closure $language): static
     {
         $this->language = $language;
 
@@ -315,7 +316,7 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
         return $this;
     }
 
-    public function darkMode(): string | bool
+    public function darkMode(): string|bool
     {
         return $this->darkMode;
     }
@@ -610,9 +611,9 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
         return $this;
     }
 
-    public function getImageList(): string | bool
+    public function getImageList(): string|bool
     {
-        if (! $this->imageList) {
+        if (!$this->imageList) {
             return config('filament-tinyeditor.profiles.' . $this->profile . '.image_list') ?? 'false';
         }
 
@@ -661,16 +662,16 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
         return config('filament-tinyeditor.profiles.' . $this->profile . '.image_description') ?? $this->imageDescription;
     }
 
-    public function imagesUploadUrl(string | \Closure $url): static
+    public function imagesUploadUrl(string|\Closure $url): static
     {
         $this->imagesUploadUrl = $url;
 
         return $this;
     }
 
-    public function getImagesUploadUrl(): string | bool
+    public function getImagesUploadUrl(): string|bool
     {
-        if (! $this->imagesUploadUrl) {
+        if (!$this->imagesUploadUrl) {
             return config('filament-tinyeditor.profiles.' . $this->profile . '.images_upload_url') ?? '';
         }
 
@@ -706,5 +707,17 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
     public function getLicenseKey(): string
     {
         return config('filament-tinyeditor.license_key', 'gpl');
+    }
+
+    public function getTextPattern(): bool
+    {
+        return $this->textPattern;
+    }
+
+    public function textPattern(bool $textPattern = true): static
+    {
+        $this->textPattern = $textPattern;
+
+        return $this;
     }
 }
