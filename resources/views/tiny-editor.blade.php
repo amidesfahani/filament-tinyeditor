@@ -18,6 +18,9 @@
             plugins: '{{ $getPlugins() }}',
             external_plugins: {{ $getExternalPlugins() }},
             toolbar: '{{ $getToolbar() }}',
+            @if(!$getTextPattern())
+                text_patterns: @js($getTextPattern()),
+            @endif
             language: '{{ $getInterfaceLanguage() }}',
             language_url: '{{ $getLanguageURL($getInterfaceLanguage()) }}',
             directionality: '{{ $getDirection() }}',
