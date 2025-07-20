@@ -54,6 +54,7 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
     protected bool $imageDescription = true;
     protected bool|string $resize = false;
     protected bool $textPattern = true;
+    protected string $contentStyle = '';
 
     protected string $tiny;
     protected string $languageVersion;
@@ -72,6 +73,7 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
         $this->darkMode = config('filament-tinyeditor.darkMode', 'auto');
         $this->skinsUI = config('filament-tinyeditor.skins.ui', 'oxide');
         $this->skinsContent = config('filament-tinyeditor.skins.content', 'default');
+        $this->contentStyle = config('filament-tinyeditor.extra.content_style', '');
     }
 
     public function getToolbar(): string
@@ -329,6 +331,11 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
     public function skinsContent(): string
     {
         return $this->skinsContent;
+    }
+
+    public function contentStyle(): string
+    {
+        return $this->contentStyle;
     }
 
     /** */
