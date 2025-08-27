@@ -2,21 +2,29 @@
 
 namespace AmidEsfahani\FilamentTinyEditor;
 
-use Filament\Forms\Components\Concerns;
-use Filament\Forms\Components\Concerns\HasExtraInputAttributes;
-use Filament\Forms\Components\Contracts;
+use Closure;
 use Filament\Forms\Components\Field;
+use Filament\Forms\Components\Concerns;
+use Filament\Forms\Components\Contracts;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
+use Filament\Forms\Components\RichEditor\FileAttachmentProviders\Contracts\FileAttachmentProvider;
 
-class TinyEditor extends Field implements Contracts\CanBeLengthConstrained, Contracts\HasFileAttachments
+class TinyEditor extends Field implements Contracts\CanBeLengthConstrained
 {
     use Concerns\CanBeLengthConstrained;
+    use Concerns\HasExtraInputAttributes;
     use Concerns\HasFileAttachments;
     use Concerns\HasPlaceholder;
+    use Concerns\InteractsWithToolbarButtons;
     use HasExtraAlpineAttributes;
-    use HasExtraInputAttributes;
 
     protected string $view = 'filament-tinyeditor::tiny-editor';
+
+    protected string | Closure | null $uploadingFileMessage = null;
+
+    public $isModalOpen = false;
+
     protected string $profile = 'default';
     protected bool $isSimple = false;
     protected string $direction;
@@ -72,6 +80,18 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
         $this->darkMode = config('filament-tinyeditor.darkMode', 'auto');
         $this->skinsUI = config('filament-tinyeditor.skins.ui', 'oxide');
         $this->skinsContent = config('filament-tinyeditor.skins.content', 'default');
+    }
+
+    public function openModal()
+    {
+        $this->isModalOpen = true;
+        $this->dispatch('open-modal');
+    }
+
+    public function closeModal()
+    {
+        $this->isModalOpen = false;
+        $this->dispatch('close-modal');
     }
 
     public function getToolbar(): string
@@ -709,6 +729,11 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
         return config('filament-tinyeditor.license_key', 'gpl');
     }
 
+    public function getUploadingMessage(): ?string
+    {
+        return $this->evaluate($this->uploadingFileMessage) ?? "";
+    }
+
     public function getTextPattern(): bool
     {
         return $this->textPattern;
@@ -719,5 +744,30 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
         $this->textPattern = $textPattern;
 
         return $this;
+    }
+
+    public function getDefaultFileAttachmentsDiskName(): ?string
+    {
+        return $this->getContentAttribute()?->getFileAttachmentsDiskName();
+    }
+
+    public function getDefaultFileAttachmentsVisibility(): ?string
+    {
+        return $this->getContentAttribute()?->getFileAttachmentsVisibility();
+    }
+
+    public function getFileAttachmentProvider(): ?FileAttachmentProvider
+    {
+        return $this->getContentAttribute()?->getFileAttachmentProvider();
+    }
+
+    public function getDefaultFileAttachmentUrl(mixed $file): ?string
+    {
+        return $this->getFileAttachmentProvider()?->getFileAttachmentUrl($file);
+    }
+
+    public function defaultSaveUploadedFileAttachment(TemporaryUploadedFile $file): mixed
+    {
+        return $this->getFileAttachmentProvider()?->saveUploadedFileAttachment($file);
     }
 }

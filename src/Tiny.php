@@ -6,17 +6,17 @@ class Tiny
 {
 	public static function version()
 	{
-		return config('filament-tinyeditor.version.tiny', '7.3.0');
+		return config('filament-tinyeditor.version.tiny', '8.0.2');
 	}
 
 	public static function languageVersion()
 	{
-		return config('filament-tinyeditor.version.language.version', '24.7.29');
+		return config('filament-tinyeditor.version.language.version', '25.8.4');
 	}
 
 	public static function languagePackage()
 	{
-		return config('filament-tinyeditor.version.language.package', 'langs7');
+		return config('filament-tinyeditor.version.language.package', 'langs8');
 	}
 
 	public static array $languages = [
@@ -79,7 +79,7 @@ class Tiny
 
 	public static function getLanguageURL($lang): string
 	{
-		return 'https://cdn.jsdelivr.net/npm/tinymce-i18n@'.static::languageVersion().'/'.static::languagePackage().'/'.$lang.'.min.js';
+		return 'https://cdn.jsdelivr.net/npm/tinymce-i18n@' . static::languageVersion() . '/' . static::languagePackage() . '/' . $lang . '.min.js';
 	}
 
 	public static function getLanguages(): array

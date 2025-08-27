@@ -1,4 +1,5 @@
 export default function tinyeditor({
+	activePanel,
 	state,
 	statePath,
 	selector,
@@ -43,54 +44,72 @@ export default function tinyeditor({
 	license_key = "gpl",
 	placeholder = null,
 	removeImagesEventCallback = null,
+	uploadingMessage = "Uploading image...",
+	key,
 }) {
+
 	let editors = window.filamentTinyEditors || {};
+
+	const dispatchFormEvent = (editor, name, detail = {}) => {
+		editor.getContainer().closest('form')?.dispatchEvent(
+			new CustomEvent(name, {
+				composed: true,
+				cancelable: true,
+				detail,
+			}),
+		);
+	};
+
 	return {
+		activePanel,
 		id: null,
-		state: state,
-		statePath: statePath,
-		selector: selector,
-		language: language,
-		language_url: language_url,
-		directionality: directionality,
-		height: height,
-		max_height: max_height,
-		min_height: min_height,
-		width: width,
-		max_width: max_width,
-		min_width: min_width,
-		resize: resize,
-		skin: skin,
-		content_css: content_css,
-		plugins: plugins,
-		external_plugins: external_plugins,
-		toolbar: toolbar,
-		text_patterns: text_patterns,
-		toolbar_sticky: toolbar_sticky,
-		menubar: menubar,
-		relative_urls: relative_urls,
-		remove_script_host: remove_script_host,
-		convert_urls: convert_urls,
-		font_size_formats: font_size_formats,
-		fontfamily: fontfamily,
-		setup: setup,
-		image_list: image_list,
-		image_advtab: image_advtab,
-		image_description: image_description,
-		image_class_list: image_class_list,
-		images_upload_url: images_upload_url,
-		images_upload_base_path: images_upload_base_path,
-		license_key: license_key,
-		custom_configs: custom_configs,
+		state,
+		statePath,
+		selector,
+		language,
+		language_url,
+		directionality,
+		height,
+		max_height,
+		min_height,
+		width,
+		max_width,
+		min_width,
+		resize,
+		skin,
+		content_css,
+		plugins,
+		external_plugins,
+		toolbar,
+		text_patterns,
+		toolbar_sticky,
+		menubar,
+		relative_urls,
+		remove_script_host,
+		convert_urls,
+		font_size_formats,
+		fontfamily,
+		setup,
+		image_list,
+		image_advtab,
+		image_description,
+		image_class_list,
+		images_upload_url,
+		images_upload_base_path,
+		license_key,
+		custom_configs,
 		updatedAt: Date.now(),
 		disabled,
-		locale: locale,
-		placeholder: placeholder,
+		locale,
+		placeholder,
 		removeImagesEventCallback,
+		isUploadingFile: false,
+		isModalOpen: false,
+
 		init() {
 			this.delete();
-
-			this.initEditor(state.initialValue);
+			this.tryInitializeEditor(state.initialValue);
+			// this.initEditor(state.initialValue);
 
 			window.filamentTinyEditors = editors;
 
@@ -105,18 +124,60 @@ export default function tinyeditor({
 				if (this.editor()?.container && newState !== this.editor()?.getContent()) {
 					this.updateEditorContent(newState || "");
 					this.putCursorToEnd();
-			}
+				}
+			});
+
+			window.addEventListener('rich-editor-uploading-file', (event) => {
+				if (event.detail.livewireId !== this.$wire.id) return;
+				if (event.detail.key !== key) return;
+				this.isUploadingFile = true;
+				event.stopPropagation();
+			});
+
+			window.addEventListener('rich-editor-uploaded-file', (event) => {
+				if (event.detail.livewireId !== this.$wire.id) return;
+				if (event.detail.key !== key) return;
+				this.isUploadingFile = false;
+				event.stopPropagation();
+			});
+
+			// Listen for Filament modal events
+			this.$el.closest('.fi-modal')?.addEventListener('open-modal', () => {
+				this.isModalOpen = true;
+				this.$nextTick(() => this.tryInitializeEditor(this.state || ""));
+			});
+
+			this.$el.closest('.fi-modal')?.addEventListener('close-modal', () => {
+				this.isModalOpen = false;
+				this.delete();
+			});
+
+			// Ensure initialization after Livewire re-renders
+			window.addEventListener('livewire:navigated', () => {
+				if (this.isModalOpen) {
+					this.$nextTick(() => this.tryInitializeEditor(this.state || ""));
+				}
 			});
 		},
 		editor() {
 			return tinymce.get(editors[this.statePath]);
+		},
+		tryInitializeEditor(content) {
+			// Retry initialization until the target node is available
+			if (!document.querySelector(this.selector)) {
+				console.warn(`TinyMCE target node ${this.selector} not found. Retrying...`);
+				setTimeout(() => this.tryInitializeEditor(content), 100);
+				return;
+			}
+
+			this.initEditor(content);
 		},
 		initEditor(content) {
 			let _this = this;
 			let $wire = this.$wire;
 
 			const defaultFontFamilyFormats = "Arial=arial,helvetica,sans-serif; Courier New=courier new,courier,monospace; AkrutiKndPadmini=Akpdmi-n";
-    		const fontFamilyFormats = fontfamily || defaultFontFamilyFormats;
+			const fontFamilyFormats = fontfamily || defaultFontFamilyFormats;
 
 			const defaultFontSizeFormats = "8pt 10pt 12pt 14pt 16pt 18pt 24pt 36pt 48pt";
 			const fontSizeFormats = font_size_formats || defaultFontSizeFormats;
@@ -151,38 +212,31 @@ export default function tinyeditor({
 				menu: {
 					file: {
 						title: "File",
-						items:
-							"newdocument restoredraft | preview | export print | deleteallconversations",
+						items: "newdocument restoredraft | preview | export print | deleteallconversations",
 					},
 					edit: {
 						title: "Edit",
-						items:
-							"undo redo | cut copy paste pastetext | selectall | searchreplace",
+						items: "undo redo | cut copy paste pastetext | selectall | searchreplace",
 					},
 					view: {
 						title: "View",
-						items:
-							"code | visualaid visualchars visualblocks | spellchecker | preview fullscreen | showcomments",
+						items: "code | visualaid visualchars visualblocks | spellchecker | preview fullscreen | showcomments",
 					},
 					insert: {
 						title: "Insert",
-						items:
-							"image link media addcomment pageembed codesample inserttable | charmap emoticons hr | pagebreak nonbreaking anchor tableofcontents | insertdatetime",
+						items: "image link media addcomment pageembed codesample inserttable | charmap emoticons hr | pagebreak nonbreaking anchor tableofcontents | insertdatetime",
 					},
 					format: {
 						title: "Format",
-						items:
-							"bold italic underline strikethrough superscript subscript codeformat | styles blocks fontfamily fontsize align lineheight | forecolor backcolor | language | removeformat",
+						items: "bold italic underline strikethrough superscript subscript codeformat | styles blocks fontfamily fontsize align lineheight | forecolor backcolor | language | removeformat",
 					},
 					tools: {
 						title: "Tools",
-						items:
-							"spellchecker spellcheckerlanguage | a11ycheck code wordcount",
+						items: "spellchecker spellcheckerlanguage | a11ycheck code wordcount",
 					},
 					table: {
 						title: "Table",
-						items:
-							"inserttable | cell row column | advtablesort | tableprops deletetable",
+						items: "inserttable | cell row column | advtablesort | tableprops deletetable",
 					},
 					help: { title: "Help", items: "help" },
 				},
@@ -233,16 +287,16 @@ export default function tinyeditor({
 						}
 					});
 
-					editor.on("OpenWindow", function(e) {
+					editor.on("OpenWindow", function (e) {
 						let target = e.target.container.closest(".fi-modal");
-						if (target){
+						if (target) {
 							target.setAttribute("x-trap.noscroll", "false");
 						}
 					});
 
-					editor.on("CloseWindow", function(e) {
+					editor.on("CloseWindow", function (e) {
 						let target = e.target.container.closest(".fi-modal");
-						if (target){
+						if (target) {
 							target.setAttribute("x-trap.noscroll", "isOpen");
 						}
 					});
@@ -254,75 +308,126 @@ export default function tinyeditor({
 
 				images_upload_handler: (blobInfo, progress) =>
 					new Promise((success, failure) => {
-						if (!blobInfo.blob()) return;
+						if (!blobInfo.blob()) {
+							failure("No file provided");
+							return;
+						}
 
-						const pathJoin = (path1, path2) => {
-							if (path1) {
-							  return path1.replace(/\/$/, '') + '/' + path2.replace(/^\//, '');
-							}
-							return path2;
-						};
+						// Show uploading state
+						this.isUploadingFile = true;
 
-						const finishCallback = () => {
-							$wire.getFormComponentFileAttachmentUrl(statePath).then((url) => {
-								if (!url) {
-									failure("Image upload failed");
-									return;
-								}
-								success(pathJoin(images_upload_base_path, url));
-							});
-						};
+						// Dispatch form processing event
+						dispatchFormEvent(this.editor(), 'form-processing-started', {
+							message: uploadingMessage,
+						});
 
-						const errorCallback = () => {};
+						// Generate unique file key (same as in Tiptap plugin)
+						let fileKey = ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(
+							/[018]/g, (c) =>
+							(c ^ (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (c / 4)))).toString(16)
+						);
 
-						const progressCallback = (e) => {
-							progress(e.detail.progress);
-						};
+						// Dispatch uploading event
+						this.editor().getContainer().dispatchEvent(
+							new CustomEvent('rich-editor-uploading-file', {
+								bubbles: true,
+								detail: {
+									key: key,
+									livewireId: this.$wire.id,
+								},
+							})
+						);
 
-						$wire.upload(
-							`componentFileAttachments.${statePath}`,
+						// Upload file using Livewire
+						this.$wire.upload(
+							`componentFileAttachments.${statePath}.${fileKey}`,
 							blobInfo.blob(),
-							finishCallback,
-							errorCallback,
-							progressCallback
+							() => {
+								// File upload completed
+								this.$wire.callSchemaComponentMethod(
+									key,
+									'getUploadedFileAttachmentTemporaryUrl',
+									{
+										attachment: fileKey,
+									}
+								).then((url) => {
+									if (!url) {
+										failure("Image upload failed - no URL returned");
+										this.isUploadingFile = false;
+										return;
+									}
+
+									// Success - return the uploaded image URL
+									success(url);
+
+									// Dispatch uploaded event
+									this.editor().getContainer().dispatchEvent(
+										new CustomEvent('rich-editor-uploaded-file', {
+											bubbles: true,
+											detail: {
+												key: key,
+												livewireId: this.$wire.id,
+											},
+										})
+									);
+
+									// Dispatch form processing finished event
+									dispatchFormEvent(this.editor(), 'form-processing-finished');
+
+									this.isUploadingFile = false;
+								}).catch((error) => {
+									failure("Failed to get uploaded file URL: " + error);
+									this.isUploadingFile = false;
+								});
+							},
+							(error) => {
+								// Upload error
+								failure("Upload failed: " + error);
+								this.isUploadingFile = false;
+								dispatchFormEvent(this.editor(), 'form-processing-finished');
+							},
+							(event) => {
+								// Upload progress
+								progress(event.detail.progress * 100); // Convert to percentage
+							}
 						);
 					}),
-				
+
 				init_instance_callback: function (editor) {
 					var MutationObserver = window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver;
 
 					var isEnabled = removeImagesEventCallback && typeof removeImagesEventCallback === 'function';
 
 					if (!isEnabled) return;
-				
+
 					var observer = new MutationObserver(function (mutations, instance) {
 						var addedImages = [];
-				
+
 						mutations.forEach(function (mutationRecord) {
 							Array.from(mutationRecord.addedNodes).forEach(function (currentNode) {
 								if (currentNode.nodeName === 'IMG' && currentNode.className !== "mce-clonedresizable") {
 									if (addedImages.indexOf(currentNode.src) >= 0) return;
-				
+
 									addedImages.push(currentNode.getAttribute("src"));
 									return;
 								}
-				
+
 								var imgs = currentNode.getElementsByTagName('img');
 								Array.from(imgs).forEach(function (img) {
 									if (addedImages.indexOf(img.src) >= 0) return;
-				
+
 									addedImages.push(img.getAttribute("src"));
 								});
 							});
 						});
-				
+
 						var removedImages = [];
-				
+
 						mutations.forEach(function (mutationRecord) {
 							Array.from(mutationRecord.removedNodes).forEach(function (currentNode) {
 								if (currentNode.nodeName === 'IMG' && currentNode.className !== "mce-clonedresizable") {
 									if (removedImages.indexOf(currentNode.src) >= 0) return;
-				
+
 									removedImages.push(currentNode.getAttribute("src"));
 									return;
 								}
@@ -331,13 +436,13 @@ export default function tinyeditor({
 									var imgs = currentNode.getElementsByTagName('img');
 									Array.from(imgs).forEach(function (img) {
 										if (addedImages.indexOf(img.src) >= 0) return;
-				
+
 										addedImages.push(img.getAttribute("src"));
 									});
 								}
 							});
 						});
-				
+
 						removedImages.forEach(function (imageSrc) {
 							if (addedImages.indexOf(imageSrc) >= 0) return;
 							if (removeImagesEventCallback && typeof removeImagesEventCallback === 'function') {
@@ -345,12 +450,12 @@ export default function tinyeditor({
 							}
 						});
 					});
-				
+
 					observer.observe(editor.getBody(), {
 						childList: true,
 						subtree: true
 					});
-				},					
+				},
 
 				automatic_uploads: true,
 			};
@@ -364,10 +469,15 @@ export default function tinyeditor({
 			this.editor().selection.select(this.editor().getBody(), true);
 			this.editor().selection.collapse(false);
 		},
-		delete()	{
-			if (editors[this.statePath]) {
-				this.editor().destroy();
-				delete	editors[this.statePath];
+		delete() {
+			try {
+				if (editors[this.statePath]) {
+					this.editor().destroy();
+					delete editors[this.statePath];
+				}
+			} catch (error) {
+				console.log(editors[this.statePath]);
+				console.log(this.editor());
 			}
 		}
 	};

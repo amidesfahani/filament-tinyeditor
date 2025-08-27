@@ -29,12 +29,12 @@ class TinyeditorServiceProvider extends PackageServiceProvider
         }
     }
 
-    public function packageRegistered(): void
+    public function packageRegistered(): void {}
+
+    public function packageBooted(): void
     {
-        $tinyVersion = config('filament-tinyeditor.version.tiny', '7.3.0');
-
+        $tinyVersion = config('filament-tinyeditor.version.tiny', '7.9.1');
         $tiny_licence_key = config('filament-tinyeditor.version.licence_key', 'no-api-key');
-
         $tiny_languages = Tiny::getLanguages();
 
         $languages = [];
