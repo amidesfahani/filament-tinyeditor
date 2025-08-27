@@ -9,17 +9,20 @@ use Filament\Forms\Components\Concerns\HasPlaceholder;
 use Filament\Forms\Components\Contracts\CanBeLengthConstrained;
 use Filament\Forms\Components\Field;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
+use Filament\Forms\Components\RichEditor\FileAttachmentProviders\Contracts\FileAttachmentProvider;
 
 class TinyEditor extends Field implements CanBeLengthConstrained
 {
     use Concerns\CanBeLengthConstrained;
+    use Concerns\HasExtraInputAttributes;
     use Concerns\HasFileAttachments;
     use HasExtraAlpineAttributes;
     use HasExtraInputAttributes;
     use HasPlaceholder;
 
     protected string $view = 'filament-tinyeditor::tiny-editor';
-
+  
     protected string $profile = 'default';
 
     protected bool $isSimple = false;
@@ -113,6 +116,18 @@ class TinyEditor extends Field implements CanBeLengthConstrained
         $this->darkMode = config('filament-tinyeditor.darkMode', 'auto');
         $this->skinsUI = config('filament-tinyeditor.skins.ui', 'oxide');
         $this->skinsContent = config('filament-tinyeditor.skins.content', 'default');
+    }
+
+    public function openModal()
+    {
+        $this->isModalOpen = true;
+        $this->dispatch('open-modal');
+    }
+
+    public function closeModal()
+    {
+        $this->isModalOpen = false;
+        $this->dispatch('close-modal');
     }
 
     public function getToolbar(): string
@@ -750,6 +765,11 @@ class TinyEditor extends Field implements CanBeLengthConstrained
         return config('filament-tinyeditor.license_key', 'gpl');
     }
 
+    public function getUploadingMessage(): ?string
+    {
+        return $this->evaluate($this->uploadingFileMessage) ?? "";
+    }
+
     public function getTextPattern(): bool
     {
         return $this->textPattern;
@@ -760,5 +780,30 @@ class TinyEditor extends Field implements CanBeLengthConstrained
         $this->textPattern = $textPattern;
 
         return $this;
+    }
+
+    public function getDefaultFileAttachmentsDiskName(): ?string
+    {
+        return $this->getContentAttribute()?->getFileAttachmentsDiskName();
+    }
+
+    public function getDefaultFileAttachmentsVisibility(): ?string
+    {
+        return $this->getContentAttribute()?->getFileAttachmentsVisibility();
+    }
+
+    public function getFileAttachmentProvider(): ?FileAttachmentProvider
+    {
+        return $this->getContentAttribute()?->getFileAttachmentProvider();
+    }
+
+    public function getDefaultFileAttachmentUrl(mixed $file): ?string
+    {
+        return $this->getFileAttachmentProvider()?->getFileAttachmentUrl($file);
+    }
+
+    public function defaultSaveUploadedFileAttachment(TemporaryUploadedFile $file): mixed
+    {
+        return $this->getFileAttachmentProvider()?->saveUploadedFileAttachment($file);
     }
 }

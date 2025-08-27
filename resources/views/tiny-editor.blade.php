@@ -1,4 +1,10 @@
 @php
+    $extraAttributeBag = $getExtraAttributeBag();
+    $fieldWrapperView = $getFieldWrapperView();
+    $id = $getId();
+    $isDisabled = $isDisabled();
+    $livewireKey = $getLivewireKey();
+    $key = $getKey();
     $statePath = $getStatePath();
 @endphp
 
@@ -99,16 +105,5 @@
             >
         @endif
     </div>
-</x-dynamic-component>
 
-@pushOnce('scripts')
-    <script>
-        // window.addEventListener('beforeunload', (event) => {
-        //     if (tinymce.activeEditor.isDirty()) {
-        //         event.preventDefault();
-        // 		// Included for legacy support, e.g. Chrome/Edge < 119
-        // 		event.returnValue = '{{ __('Are you sure you want to leave?') }}';
-        //     }
-        // });
-    </script>
-@endPushOnce
+</x-dynamic-component>

@@ -2,16 +2,17 @@
 
 return [
     'version' => [
-        'tiny' => '7.3.0',
+        'tiny' => '8.0.2',
         'language' => [
             // https://cdn.jsdelivr.net/npm/tinymce-i18n@latest/
-            'version' => '24.7.29',
-            'package' => 'langs7',
+            'version' => '25.8.4',
+            'package' => 'langs8',
         ],
         'licence_key' => env('TINY_LICENSE_KEY', 'no-api-key'),
     ],
     'provider' => 'cloud', // cloud|vendor
     // 'direction' => 'rtl',
+
     /**
      * change darkMode: 'auto'|'force'|'class'|'media'|false|'custom'
      */
@@ -56,8 +57,8 @@ return [
      * this option will load optional language file based on you app locale
      * example:
      * languages => [
-     *      'fa' => 'https://cdn.jsdelivr.net/npm/tinymce-i18n@24.7.29/langs7/fa.min.js',
-     *      'es' => 'https://cdn.jsdelivr.net/npm/tinymce-i18n@24.7.29/langs7/es.min.js',
+     *      'fa' => 'https://cdn.jsdelivr.net/npm/tinymce-i18n@25.8.4/langs7/fa.min.js',
+     *      'es' => 'https://cdn.jsdelivr.net/npm/tinymce-i18n@25.8.4/langs7/es.min.js',
      *      'ja' => asset('assets/ja.min.js')
      * ]
      */

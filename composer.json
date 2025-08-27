@@ -1,6 +1,6 @@
 {
     "name": "amidesfahani/filament-tinyeditor",
-    "description": "Filament TinyMce Editor v6",
+    "description": "Filament TinyMce Editor",
     "license": "MIT",
     "keywords": ["laravel", "filament", "tinyeditor", "tinymce"],
     "authors": [
@@ -30,6 +30,6 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "require-dev": {
-        "laravel/pint": "^1.13"
+        "laravel/pint": "^1.24"
     }
 }

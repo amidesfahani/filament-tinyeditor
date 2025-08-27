@@ -13,8 +13,8 @@
 	"devDependencies": {
 		"alpinejs": "^3.10.5",
 		"autoprefixer": "^10.4.7",
-		"esbuild": "^0.19.4",
-		"npm-run-all": "^4.1.5",
+		"esbuild": "^0.25.3",
+        "npm-run-all": "^4.1.5",
 		"prettier": "^2.7.1",
 		"prettier-plugin-blade": "^1.5.3"
 	}
