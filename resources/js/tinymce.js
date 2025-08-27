@@ -264,7 +264,10 @@ export default function tinyeditor({
 						};
 
 						const finishCallback = () => {
-							$wire.getFormComponentFileAttachmentUrl(statePath).then((url) => {
+							$wire.callSchemaComponentMethod(
+								statePath,
+								'saveUploadedFileAttachment',
+							).then((url) => {
 								if (!url) {
 									failure("Image upload failed");
 									return;
@@ -287,42 +290,42 @@ export default function tinyeditor({
 							progressCallback
 						);
 					}),
-				
+
 				init_instance_callback: function (editor) {
 					var MutationObserver = window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver;
 
 					var isEnabled = removeImagesEventCallback && typeof removeImagesEventCallback === 'function';
 
 					if (!isEnabled) return;
-				
+
 					var observer = new MutationObserver(function (mutations, instance) {
 						var addedImages = [];
-				
+
 						mutations.forEach(function (mutationRecord) {
 							Array.from(mutationRecord.addedNodes).forEach(function (currentNode) {
 								if (currentNode.nodeName === 'IMG' && currentNode.className !== "mce-clonedresizable") {
 									if (addedImages.indexOf(currentNode.src) >= 0) return;
-				
+
 									addedImages.push(currentNode.getAttribute("src"));
 									return;
 								}
-				
+
 								var imgs = currentNode.getElementsByTagName('img');
 								Array.from(imgs).forEach(function (img) {
 									if (addedImages.indexOf(img.src) >= 0) return;
-				
+
 									addedImages.push(img.getAttribute("src"));
 								});
 							});
 						});
-				
+
 						var removedImages = [];
-				
+
 						mutations.forEach(function (mutationRecord) {
 							Array.from(mutationRecord.removedNodes).forEach(function (currentNode) {
 								if (currentNode.nodeName === 'IMG' && currentNode.className !== "mce-clonedresizable") {
 									if (removedImages.indexOf(currentNode.src) >= 0) return;
-				
+
 									removedImages.push(currentNode.getAttribute("src"));
 									return;
 								}
@@ -331,13 +334,13 @@ export default function tinyeditor({
 									var imgs = currentNode.getElementsByTagName('img');
 									Array.from(imgs).forEach(function (img) {
 										if (addedImages.indexOf(img.src) >= 0) return;
-				
+
 										addedImages.push(img.getAttribute("src"));
 									});
 								}
 							});
 						});
-				
+
 						removedImages.forEach(function (imageSrc) {
 							if (addedImages.indexOf(imageSrc) >= 0) return;
 							if (removeImagesEventCallback && typeof removeImagesEventCallback === 'function') {
@@ -345,12 +348,12 @@ export default function tinyeditor({
 							}
 						});
 					});
-				
+
 					observer.observe(editor.getBody(), {
 						childList: true,
 						subtree: true
 					});
-				},					
+				},
 
 				automatic_uploads: true,
 			};
