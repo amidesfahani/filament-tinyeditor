@@ -158,13 +158,13 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained
     public function openModal()
     {
         $this->isModalOpen = true;
-        $this->dispatch('open-modal');
+        $this->dispatch('open-tinyeditor-modal');
     }
 
     public function closeModal()
     {
         $this->isModalOpen = false;
-        $this->dispatch('close-modal');
+        $this->dispatch('close-tinyeditor-modal');
     }
 
     public function getToolbar(): string

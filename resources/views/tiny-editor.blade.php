@@ -13,15 +13,14 @@
         $textareaID = 'tiny-editor-' . str_replace(['.', '#', '$'], '-', $getId()) . '-' . rand();
     @endphp
 
-    <div x-data="{ isModalOpen: false }" x-init="
-        $el.closest('.fi-modal')?.addEventListener('open-modal', () => { isModalOpen = true; });
-        $el.closest('.fi-modal')?.addEventListener('close-modal', () => { isModalOpen = false; });
-        $watch('isModalOpen', value => { $dispatch('modal-visibility-changed', { isOpen: value }); });
-    ">
+    <div x-data="{ isModalOpen: false }" x-init="$el.closest('.fi-modal')?.addEventListener('open-tinyeditor-modal', () => { isModalOpen = true; });
+    $el.closest('.fi-modal')?.addEventListener('close-tinyeditor-modal', () => { isModalOpen = false; });
+    $watch('isModalOpen', value => { $dispatch('modal-visibility-changed', { isOpen: value }); });">
         <x-filament::input.wrapper :valid="!$errors->has($statePath)" x-cloak :attributes="\Filament\Support\prepare_inherited_attributes($extraAttributeBag)">
             <div x-load
                 x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('tinyeditor', 'amidesfahani/filament-tinyeditor') }}"
-                x-load-css="[@js(\Filament\Support\Facades\FilamentAsset::getStyleHref('tiny-css', package: 'amidesfahani/filament-tinyeditor'))]" x-load-js="[@js(\Filament\Support\Facades\FilamentAsset::getScriptSrc($getLanguageId(), package: 'amidesfahani/filament-tinyeditor'))]" x-data="tinyeditor({
+                x-load-css="[@js(\Filament\Support\Facades\FilamentAsset::getStyleHref('tiny-css', package: 'amidesfahani/filament-tinyeditor'))]" x-load-js="[@js(\Filament\Support\Facades\FilamentAsset::getScriptSrc($getLanguageId(), package: 'amidesfahani/filament-tinyeditor'))]"
+                x-data="tinyeditor({
                     state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$statePath}')", isOptimisticallyLive: false) }},
                     statePath: @js($statePath),
                 
@@ -82,15 +81,15 @@
                     custom_configs: {{ $getCustomConfigs() }},
                     uploadingMessage: '{{ $getUploadingMessage() ?: 'Uploading image...' }}',
                     key: '{{ $getKey() }}',
-                })"
-                wire:ignore
+                })" wire:ignore
                 wire:key="{{ $livewireKey }}.{{ substr(md5(serialize([$isDisabled])), 0, 64) }}">
                 @if ($isDisabled)
                     <div x-html="state" @style(['max-height: ' . $getPreviewMaxHeight() . 'px' => $getPreviewMaxHeight() > 0, 'min-height: ' . $getPreviewMinHeight() . 'px' => $getPreviewMinHeight() > 0])
                         class="prose dark:prose-invert block w-full max-w-none overflow-y-auto rounded-lg border border-gray-300 bg-white p-3 opacity-70 shadow-sm transition duration-75 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
                     </div>
                 @else
-                    <input id="{{ $textareaID }}" type="hidden" x-ref="tinymce" placeholder="{{ $getPlaceholder() }}">
+                    <input id="{{ $textareaID }}" type="hidden" x-ref="tinymce"
+                        placeholder="{{ $getPlaceholder() }}">
                 @endif
             </div>
         </x-filament::input.wrapper>

@@ -182,12 +182,12 @@ export default function tinyeditor({
 			});
 
 			// Listen for Filament modal events
-			this.$el.closest('.fi-modal')?.addEventListener('open-modal', () => {
+			this.$el.closest('.fi-modal')?.addEventListener('open-tinyeditor-modal', () => {
 				this.isModalOpen = true;
 				this.$nextTick(() => this.tryInitializeEditor(this.state || ""));
 			});
 
-			this.$el.closest('.fi-modal')?.addEventListener('close-modal', () => {
+			this.$el.closest('.fi-modal')?.addEventListener('close-tinyeditor-modal', () => {
 				this.isModalOpen = false;
 				this.delete();
 			});
