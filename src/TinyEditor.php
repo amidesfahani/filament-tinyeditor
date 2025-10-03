@@ -147,7 +147,6 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained
                     $newState .= $doc->saveHTML($node);
                 }
                 $component->state($newState);
-                Log::debug('State updated', ['new_state' => $newState]);
             }
 
             // Clean up unused files
