@@ -320,17 +320,11 @@ export default function tinyeditor({
 					editor.on("blur", function (e) {
 						_this.updatedAt = Date.now();
 						_this.state = editor.getContent();
-						_this.$wire.callSchemaComponentMethod(key, 'cleanUpUnusedImages', {
-							state: _this.state,
-						});
 					});
 
 					editor.on("change", function (e) {
 						_this.updatedAt = Date.now();
 						_this.state = editor.getContent();
-						_this.$wire.callSchemaComponentMethod(key, 'cleanUpUnusedImages', {
-							state: _this.state,
-						});
 					});
 
 					editor.on("init", function (e) {
