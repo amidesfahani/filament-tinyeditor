@@ -3,7 +3,6 @@
 namespace AmidEsfahani\FilamentTinyEditor;
 
 use Closure;
-use Illuminate\Support\Facades\Log;
 use Filament\Forms\Components\Field;
 use Filament\Forms\Components\Concerns;
 use Illuminate\Database\Eloquent\Model;
@@ -44,7 +43,7 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained
     protected string $toolbar;
     protected bool $toolbarSticky = true;
     protected int $toolbarStickyOffset = 64;
-    protected string $toolbarMode = 'floating';
+    protected string $toolbarMode = 'sliding';
     protected string $toolbarLocation = 'auto';
     protected bool $inlineOption = false;
     protected bool $toolbarPersist = false;
@@ -87,7 +86,7 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained
         $this->beforeStateDehydrated(function (TinyEditor $component, ?string $rawState, ?Model $record) {
             $fileAttachmentProvider = $this->getFileAttachmentProvider();
             
-            $tempDiskName = config('livewire.temporary_file_upload.disk', 'local');
+            $tempDiskName = config('livewire.temporary_file_upload.disk', config('filament-tinyeditor.temporary_file_upload_disk', 'local'));
             $tempDisk = Storage::disk($tempDiskName);
             
             $fileAttachmentIds = [];
@@ -190,6 +189,7 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained
     {
         $defaultConfigs = config("filament-tinyeditor.profiles.{$this->profile}.custom_configs", []);
         $customConfigs = $this->evaluate($this->customConfigs) ?? [];
+        $customConfigs = is_array($customConfigs) ? $customConfigs : [];
         $mergedConfigs = array_replace_recursive($customConfigs, $defaultConfigs);
 
         if (empty($mergedConfigs)) {
