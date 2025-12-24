@@ -54,6 +54,7 @@ export default function tinyeditor({
 	toolbar_sticky_offset = 64,
 	toolbar_mode = 'sliding',
 	toolbar_location = 'auto',
+	fixed_toolbar_container_target = null,
 	inline = false,
 	toolbar_persist = false,
 	menubar = false,
@@ -80,25 +81,6 @@ export default function tinyeditor({
 }) {
 
 	let editors = window.filamentTinyEditors || {};
-
-	// const generateUUID = () => {
-	//     if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
-	//         return crypto.randomUUID();
-	//     }
-	//     return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
-	//         (c ^ (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (c / 4)))).toString(16)
-	//     );
-	// };
-
-	// const dispatchFormEvent = (editor, name, detail = {}) => {
-	// 	editor.getContainer().closest('form')?.dispatchEvent(
-	// 		new CustomEvent(name, {
-	// 			composed: true,
-	// 			cancelable: true,
-	// 			detail,
-	// 		}),
-	// 	);
-	// };
 
 	return {
 		activePanel,
@@ -148,21 +130,34 @@ export default function tinyeditor({
 
 		init() {
 			this.delete();
-			this.tryInitializeEditor(state.initialValue);
-			// this.initEditor(state.initialValue);
 
-			window.filamentTinyEditors = editors;
+			if (!this.inline || this.isModalOpen) {
+				this.$nextTick(() => {
+					this.tryInitializeEditor(this.state || "");
+				});
+			}
 
-			this.$watch("state", (newState, oldState) => {
-				if (newState === "<p></p>" && newState !== this.editor()?.getContent()) {
-					if (this.editor()) {
-						this.editor().destroy();
-					}
-					this.initEditor(newState);
-				}
+			// this.$watch("state", (newState, oldState) => {
+			// 	if (newState === "<p></p>" && newState !== this.editor()?.getContent()) {
+			// 		if (this.editor()) {
+			// 			this.editor().destroy();
+			// 		}
+			// 		this.initEditor(newState);
+			// 	}
 
-				if (this.editor()?.container && newState !== this.editor()?.getContent()) {
-					this.updateEditorContent(newState || "");
+			// 	if (this.editor()?.container && newState !== this.editor()?.getContent()) {
+			// 		this.updateEditorContent(newState || "");
+			// 		this.putCursorToEnd();
+			// 	}
+			// });
+
+			this.$watch('state', (value) => {
+				if (!this.editor()) return;
+				// Skip update if we're currently uploading a file to prevent editor refresh
+				if (this.isUploadingFile) return;
+
+				if (value !== this.editor().getContent()) {
+					this.updateEditorContent(value || "");
 					this.putCursorToEnd();
 				}
 			});
@@ -192,15 +187,76 @@ export default function tinyeditor({
 				this.delete();
 			});
 
+			this.$watch('isModalOpen', (open) => {
+				// Skip during file upload to prevent editor refresh
+				if (this.isUploadingFile) return;
+
+				if (open) {
+					this.$nextTick(() => {
+						this.delete();
+						this.tryInitializeEditor(this.state || "");
+					});
+				} else {
+					this.delete();
+				}
+			});
+
+			// Handle Repeater: Re-initialize editor after Livewire morphs DOM
+			// This fixes the issue where TinyEditor inside Repeater doesn't show toolbar
+			this._reinitOnMorph = () => {
+				// Skip reinit during file upload to prevent all editors from refreshing
+				if (this.isUploadingFile) return;
+
+				this.$nextTick(() => {
+					// Check if the editor element still exists in DOM but editor is not initialized
+					const editorElement = document.querySelector(this.selector);
+					if (editorElement && !this.editor()) {
+						this.tryInitializeEditor(this.state || "");
+					}
+				});
+			};
+
+			// Listen for Livewire v3 morph events
+			document.addEventListener('livewire:morph', this._reinitOnMorph);
+
+			// Also handle the case where the element is dynamically added (e.g., repeater item added)
+			// Use MutationObserver as a fallback for repeater scenarios
+			const repeaterContainer = this.$el.closest('[wire\\:sortable]') || this.$el.closest('.fi-fo-repeater');
+			if (repeaterContainer) {
+				this._repeaterObserver = new MutationObserver((mutations) => {
+					// Skip during file upload to prevent all editors from refreshing
+					if (this.isUploadingFile) return;
+
+					this.$nextTick(() => {
+						const editorElement = document.querySelector(this.selector);
+						if (editorElement && !this.editor()) {
+							this.tryInitializeEditor(this.state || "");
+						}
+					});
+				});
+
+				this._repeaterObserver.observe(repeaterContainer, {
+					childList: true,
+					subtree: true
+				});
+			}
+
 			// Ensure initialization after Livewire re-renders
 			window.addEventListener('livewire:navigated', () => {
 				if (this.isModalOpen) {
 					this.$nextTick(() => this.tryInitializeEditor(this.state || ""));
 				}
 			});
+
+			window.filamentTinyEditors = editors;
 		},
 		editor() {
 			return tinymce.get(editors[this.statePath]);
+		},
+		isInsideRepeater() {
+			return this.$el.closest('[wire\\:sortable]') !== null || 
+				   this.$el.closest('.fi-fo-repeater') !== null ||
+				   this.$el.closest('.fi-fo-builder') !== null;
 		},
 		tryInitializeEditor(content) {
 			// Retry initialization until the target node is available
@@ -249,13 +305,17 @@ export default function tinyeditor({
 				external_plugins: external_plugins,
 				toolbar: toolbar,
 				text_patterns: text_patterns,
-				toolbar_sticky: toolbar_sticky,
+				// Disable sticky toolbar inside repeaters to prevent positioning issues
+				toolbar_sticky: this.isInsideRepeater() ? false : toolbar_sticky,
 				toolbar_sticky_offset: toolbar_sticky_offset,
 				toolbar_mode: toolbar_mode,
 				toolbar_location: toolbar_location,
+				fixed_toolbar_container_target: fixed_toolbar_container_target,
 				inline: inline,
 				toolbar_persist: toolbar_persist,
 				menubar: menubar,
+				// Fix z-index issues inside repeaters and modals
+				ui_mode: 'split',
 				menu: {
 					file: {
 						title: "File",
@@ -534,6 +594,16 @@ export default function tinyeditor({
 					this.editor().destroy();
 					delete editors[this.statePath];
 				}
+
+				// Clean up event listeners
+				if (this._reinitOnMorph) {
+					document.removeEventListener('livewire:morph', this._reinitOnMorph);
+				}
+				// Clean up MutationObserver
+				if (this._repeaterObserver) {
+					this._repeaterObserver.disconnect();
+				}
+
 			} catch (error) {
 				console.log(editors[this.statePath]);
 				console.log(this.editor());
