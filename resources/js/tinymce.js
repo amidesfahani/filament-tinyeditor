@@ -54,6 +54,7 @@ export default function tinyeditor({
 	toolbar_sticky_offset = 64,
 	toolbar_mode = 'sliding',
 	toolbar_location = 'auto',
+	fixed_toolbar_container_target = null,
 	inline = false,
 	toolbar_persist = false,
 	menubar = false,
@@ -77,6 +78,7 @@ export default function tinyeditor({
 	removeImagesEventCallback = null,
 	uploadingMessage = "Uploading image...",
 	key,
+	$wire,
 }) {
 
 	let editors = window.filamentTinyEditors || {};
@@ -99,6 +101,10 @@ export default function tinyeditor({
 	// 		}),
 	// 	);
 	// };
+
+	// Store livewire ID at initialization to avoid accessing stale $wire reference
+	const livewireId = $wire?.id;
+	let eventListeners = [];
 
 	return {
 		activePanel,
@@ -145,46 +151,69 @@ export default function tinyeditor({
 		removeImagesEventCallback,
 		isUploadingFile: false,
 		isModalOpen: false,
+		$wire,
 
 		init() {
 			this.delete();
-			this.tryInitializeEditor(state.initialValue);
+			// this.tryInitializeEditor(state.initialValue);
 			// this.initEditor(state.initialValue);
+
+			if (!this.inline || this.isModalOpen) {
+				this.$nextTick(() => {
+					this.tryInitializeEditor(this.state || "");
+				});
+			}
 
 			window.filamentTinyEditors = editors;
 
-			this.$watch("state", (newState, oldState) => {
-				if (newState === "<p></p>" && newState !== this.editor()?.getContent()) {
-					if (this.editor()) {
-						this.editor().destroy();
-					}
-					this.initEditor(newState);
-				}
+			// this.$watch("state", (newState, oldState) => {
+			// 	if (newState === "<p></p>" && newState !== this.editor()?.getContent()) {
+			// 		if (this.editor()) {
+			// 			this.editor().destroy();
+			// 		}
+			// 		this.initEditor(newState);
+			// 	}
 
-				if (this.editor()?.container && newState !== this.editor()?.getContent()) {
-					this.updateEditorContent(newState || "");
+			// 	if (this.editor()?.container && newState !== this.editor()?.getContent()) {
+			// 		this.updateEditorContent(newState || "");
+			// 		this.putCursorToEnd();
+			// 	}
+			// });
+
+			this.$watch('state', (value) => {
+				if (!this.editor()) return;
+		
+				if (value !== this.editor().getContent()) {
+					this.updateEditorContent(value || "");
 					this.putCursorToEnd();
 				}
 			});
 
-			window.addEventListener('rich-editor-uploading-file', (event) => {
-				if (event.detail.livewireId !== this.$wire.id) return;
+			const uploadingFileHandler = (event) => {
+				if (!livewireId || event.detail.livewireId !== livewireId) return;
 				if (event.detail.key !== key) return;
 				this.isUploadingFile = true;
 				event.stopPropagation();
-			});
+			};
+			window.addEventListener('rich-editor-uploading-file', uploadingFileHandler);
+			eventListeners.push(['rich-editor-uploading-file', uploadingFileHandler]);
 
-			window.addEventListener('rich-editor-uploaded-file', (event) => {
-				if (event.detail.livewireId !== this.$wire.id) return;
+			const uploadedFileHandler = (event) => {
+				if (!livewireId || event.detail.livewireId !== livewireId) return;
 				if (event.detail.key !== key) return;
 				this.isUploadingFile = false;
 				event.stopPropagation();
-			});
+			};
+			window.addEventListener('rich-editor-uploaded-file', uploadedFileHandler);
+			eventListeners.push(['rich-editor-uploaded-file', uploadedFileHandler]);
 
 			// Listen for Filament modal events
+			// this.$el.closest('.fi-modal')?.addEventListener('open-tinyeditor-modal', () => {
+			// 	this.isModalOpen = true;
+			// 	this.$nextTick(() => this.tryInitializeEditor(this.state || ""));
+			// });
 			this.$el.closest('.fi-modal')?.addEventListener('open-tinyeditor-modal', () => {
 				this.isModalOpen = true;
-				this.$nextTick(() => this.tryInitializeEditor(this.state || ""));
 			});
 
 			this.$el.closest('.fi-modal')?.addEventListener('close-tinyeditor-modal', () => {
@@ -198,28 +227,113 @@ export default function tinyeditor({
 					this.$nextTick(() => this.tryInitializeEditor(this.state || ""));
 				}
 			});
+
+			this.$watch('isModalOpen', (open) => {
+				if (open) {
+					this.$nextTick(() => {
+						this.delete();
+						this.tryInitializeEditor(this.state || "");
+					});
+				} else {
+					this.delete();
+				}
+			});
+
+			// Handle Repeater: Re-initialize editor after Livewire morphs DOM
+			// This fixes the issue where TinyEditor inside Repeater doesn't show toolbar
+			this._reinitOnMorph = () => {
+				this.$nextTick(() => {
+					// Check if the editor element still exists in DOM but editor is not initialized
+					const editorElement = document.querySelector(this.selector);
+					if (editorElement && !this.editor()) {
+						this.tryInitializeEditor(this.state || "");
+					}
+				});
+			};
+
+			// Listen for Livewire v3 morph events
+			document.addEventListener('livewire:morph', this._reinitOnMorph);
+
+			// Also handle the case where the element is dynamically added (e.g., repeater item added)
+			// Use MutationObserver as a fallback for repeater scenarios
+			const repeaterContainer = this.$el.closest('[wire\\:sortable]') || this.$el.closest('.fi-fo-repeater');
+			if (repeaterContainer) {
+				this._repeaterObserver = new MutationObserver((mutations) => {
+					this.$nextTick(() => {
+						const editorElement = document.querySelector(this.selector);
+						if (editorElement && !this.editor()) {
+							this.tryInitializeEditor(this.state || "");
+						}
+					});
+				});
+
+				this._repeaterObserver.observe(repeaterContainer, {
+					childList: true,
+					subtree: true
+				});
+			}
 		},
 		editor() {
 			return tinymce.get(editors[this.statePath]);
 		},
-		tryInitializeEditor(content) {
-			// Retry initialization until the target node is available
-			if (!document.querySelector(this.selector)) {
-				console.warn(`TinyMCE target node ${this.selector} not found. Retrying...`);
-				setTimeout(() => this.tryInitializeEditor(content), 100);
+		isInsideRepeater() {
+			return this.$el.closest('[wire\\:sortable]') !== null || 
+				   this.$el.closest('.fi-fo-repeater') !== null ||
+				   this.$el.closest('.fi-fo-builder') !== null;
+		},
+		// tryInitializeEditor(content) {
+		// 	// Retry initialization until the target node is available
+		// 	if (!document.querySelector(this.selector)) {
+		// 		console.warn(`TinyMCE target node ${this.selector} not found. Retrying...`);
+		// 		setTimeout(() => this.tryInitializeEditor(content), 100);
+		// 		return;
+		// 	}
+
+		// 	this.initEditor(content);
+		// },
+		tryInitializeEditor(content, retryCount = 0) {
+			// Max retries to prevent infinite loops
+			const maxRetries = 50;
+			if (retryCount > maxRetries) {
+				console.warn(`TinyMCE: Failed to initialize editor for ${this.selector} after ${maxRetries} retries`);
 				return;
 			}
 
+			if (this.editor()) return;
+		
+			const targetElement = document.querySelector(this.selector);
+			if (!targetElement) {
+				setTimeout(() => this.tryInitializeEditor(content, retryCount + 1), 100);
+				return;
+			}
+
+			// Check if element is visible (has dimensions) - important for repeaters
+			// Elements might exist but be hidden initially
+			const rect = targetElement.getBoundingClientRect();
+			const isVisible = rect.width > 0 || rect.height > 0 || targetElement.offsetParent !== null;
+			
+			if (!isVisible && retryCount < 20) {
+				// Element exists but might not be visible yet (e.g., inside collapsed repeater item)
+				setTimeout(() => this.tryInitializeEditor(content, retryCount + 1), 100);
+				return;
+			}
+		
 			this.initEditor(content);
 		},
-		getFileAttachmentUrl: (fileKey) =>
-			this.$wire.callSchemaComponentMethod(
+		getFileAttachmentUrl(fileKey) {
+			// Safety check - ensure $wire is still available
+			if (!this.$wire) {
+				console.warn('TinyMCE: $wire is not available, component may have been destroyed');
+				return Promise.reject('Livewire component not available');
+			}
+			return this.$wire.callSchemaComponentMethod(
 				key,
 				'getUploadedFileAttachmentTemporaryUrl',
 				{
 					attachment: fileKey,
 				},
-			),
+			);
+		},
 		initEditor(content) {
 			let _this = this;
 
@@ -249,13 +363,17 @@ export default function tinyeditor({
 				external_plugins: external_plugins,
 				toolbar: toolbar,
 				text_patterns: text_patterns,
-				toolbar_sticky: toolbar_sticky,
+				// Disable sticky toolbar inside repeaters to prevent positioning issues
+				toolbar_sticky: this.isInsideRepeater() ? false : toolbar_sticky,
 				toolbar_sticky_offset: toolbar_sticky_offset,
 				toolbar_mode: toolbar_mode,
 				toolbar_location: toolbar_location,
+				fixed_toolbar_container_target: fixed_toolbar_container_target,
 				inline: inline,
 				toolbar_persist: toolbar_persist,
 				menubar: menubar,
+				// Fix z-index issues inside repeaters and modals
+				ui_mode: 'split',
 				menu: {
 					file: {
 						title: "File",
@@ -354,13 +472,21 @@ export default function tinyeditor({
 				},
 
 				removeImagesEventCallback: (imageSrc) => {
-					this.$wire.callSchemaComponentMethod(key, 'deleteUploadedImage', { src: imageSrc });
+					if (this.$wire) {
+						this.$wire.callSchemaComponentMethod(key, 'deleteUploadedImage', { src: imageSrc });
+					}
 				},
 
 				images_upload_handler: (blobInfo, progress) =>
 					new Promise((success, failure) => {
 						if (!blobInfo.blob()) {
 							failure("No file provided");
+							return;
+						}
+
+						// Safety check - ensure $wire is still available
+						if (!this.$wire) {
+							failure("Livewire component not available");
 							return;
 						}
 
@@ -385,7 +511,7 @@ export default function tinyeditor({
 								bubbles: true,
 								detail: {
 									key: key,
-									livewireId: this.$wire.id,
+									livewireId: livewireId,
 								},
 							})
 						);
@@ -411,7 +537,7 @@ export default function tinyeditor({
 												bubbles: true,
 												detail: {
 													key: key,
-													livewireId: this.$wire.id,
+													livewireId: livewireId,
 												},
 											})
 										);
@@ -525,11 +651,30 @@ export default function tinyeditor({
 			this.editor().setContent(content);
 		},
 		putCursorToEnd() {
-			this.editor().selection.select(this.editor().getBody(), true);
-			this.editor().selection.collapse(false);
+			try {
+				this.editor().selection.select(this.editor().getBody(), true);
+				this.editor().selection.collapse(false);
+			} catch (error) {
+				console.error('Error putting cursor to end:', error);
+			}
 		},
 		delete() {
 			try {
+				// Clean up window event listeners
+				eventListeners.forEach(([eventName, handler]) => {
+					window.removeEventListener(eventName, handler);
+				});
+				eventListeners = [];
+
+				// Clean up event listeners
+				if (this._reinitOnMorph) {
+					document.removeEventListener('livewire:morph', this._reinitOnMorph);
+				}
+				// Clean up MutationObserver
+				if (this._repeaterObserver) {
+					this._repeaterObserver.disconnect();
+				}
+				// Destroy TinyMCE editor
 				if (editors[this.statePath]) {
 					this.editor().destroy();
 					delete editors[this.statePath];
