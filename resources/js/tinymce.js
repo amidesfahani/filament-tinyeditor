@@ -369,6 +369,10 @@ export default function tinyeditor({
 				images_upload_base_path: images_upload_base_path,
 				license_key: license_key,
 
+				// Add shortcodes CSS via content_style (more efficient than JS injection)
+				content_style: shortcodes && shortcodes.length > 0 ?
+					'.shortcode-tag { display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 2px 8px; border-radius: 12px; font-size: 12px; font-weight: 500; margin: 0 2px; cursor: default; user-select: none; -webkit-user-select: none; vertical-align: baseline; }' : '',
+
 				...custom_configs,
 
 				setup: function (editor) {
@@ -405,30 +409,6 @@ export default function tinyeditor({
 									return '{{ ' + code + ' }}';
 								});
 							}
-						});
-
-						// Add CSS styles for shortcode tags
-						editor.on('init', function() {
-							var css = '.shortcode-tag { ' +
-								'display: inline-block; ' +
-								'background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); ' +
-								'color: white; ' +
-								'padding: 2px 8px; ' +
-								'border-radius: 12px; ' +
-								'font-size: 12px; ' +
-								'font-weight: 500; ' +
-								'margin: 0 2px; ' +
-								'cursor: default; ' +
-								'user-select: none; ' +
-								'-webkit-user-select: none; ' +
-								'vertical-align: baseline; ' +
-							'}';
-
-							var head = editor.getDoc().head;
-							var style = editor.getDoc().createElement('style');
-							style.type = 'text/css';
-							style.appendChild(editor.getDoc().createTextNode(css));
-							head.appendChild(style);
 						});
 
 						// Register the menu button

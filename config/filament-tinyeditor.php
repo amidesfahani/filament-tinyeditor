@@ -10,7 +10,7 @@ return [
         ],
         'licence_key' => env('TINY_LICENSE_KEY', 'no-api-key'),
     ],
-    'provider' => 'cloud', // cloud|vendor
+    'provider' => 'vendor', // cloud|vendor (vendor is faster - loads from local files)
     // 'direction' => 'rtl',
 
     /**
@@ -43,6 +43,12 @@ return [
         'minimal' => [
             'plugins' => 'link wordcount',
             'toolbar' => 'bold italic link numlist bullist',
+            'upload_directory' => null,
+        ],
+
+        'notification' => [
+            'plugins' => 'directionality link lists',
+            'toolbar' => 'bold italic underline | rtl ltr | alignright aligncenter alignleft | numlist bullist | forecolor backcolor | link',
             'upload_directory' => null,
         ],
 
