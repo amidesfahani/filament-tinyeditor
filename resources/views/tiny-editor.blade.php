@@ -115,7 +115,7 @@
                     custom_configs: {{ $getCustomConfigs() }},
                     shortcodes: {!! $getShortcodesJson() !!},
                     uploadingMessage: '{{ $getUploadingMessage() ?: 'Uploading image...' }}',
-                    key: '{{ $getKey() }}',
+                    key: '{{ $getKey() }}'
                 })"
                 wire:ignore
                 wire:key="{{ $livewireKey }}.{{ substr(md5(serialize([$isDisabled])), 0, 64) }}"
