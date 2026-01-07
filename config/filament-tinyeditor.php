@@ -46,12 +46,6 @@ return [
             'upload_directory' => null,
         ],
 
-        'notification' => [
-            'plugins' => 'directionality link lists',
-            'toolbar' => 'bold italic underline | rtl ltr | alignright aligncenter alignleft | numlist bullist | forecolor backcolor | link',
-            'upload_directory' => null,
-        ],
-
         'full' => [
             'plugins' => 'accordion autoresize codesample directionality advlist autolink link image lists charmap preview anchor pagebreak searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media table emoticons help',
             'toolbar' => 'undo redo removeformat | fontfamily fontsize fontsizeinput font_size_formats styles | bold italic underline | rtl ltr | alignjustify alignright aligncenter alignleft | numlist bullist outdent indent accordion | forecolor backcolor | blockquote table toc hr | image link anchor media codesample emoticons | visualblocks print preview wordcount fullscreen help',

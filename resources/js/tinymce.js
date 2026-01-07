@@ -389,10 +389,11 @@ export default function tinyeditor({
 							return '<span class="shortcode-tag" data-shortcode="' + value + '" contenteditable="false">' + text + '</span>';
 						}
 
-						// Convert {{ shortcode }} to visual tags when content is set
+						// Convert {shortcode} or {{ shortcode }} to visual tags when content is set
 						editor.on('BeforeSetContent', function(e) {
 							if (e.content) {
-								e.content = e.content.replace(/\{\{\s*(\w+)\s*\}\}/g, function(match, code) {
+								// Match both single {code} and double {{ code }} braces
+								e.content = e.content.replace(/\{+\s*(\w+)\s*\}+/g, function(match, code) {
 									var label = shortcodeMap[code];
 									if (label) {
 										return createShortcodeTag(code, label);
