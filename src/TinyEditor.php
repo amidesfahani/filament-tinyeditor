@@ -65,6 +65,7 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained
     protected bool|string $resize = false;
     protected bool $textPattern = true;
     protected array $shortcodes = [];
+    protected string $shortcodesLabel = 'Shortcodes';
 
     protected string $tiny;
     protected string $languageVersion;
@@ -656,7 +657,7 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained
 
         // Add shortcodes plugin if enabled
         if (!empty($this->shortcodes)) {
-            $plugins['shortcodes'] = asset('js/amidesfahani/filament-tinyeditor/shortcodes.js');
+            $plugins['shortcodes'] = asset('js/amidesfahani/filament-tinyeditor/shortcodes.js') . '?v=' . time();
         }
 
         if (!empty($plugins)) {
@@ -800,9 +801,23 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained
         return $this;
     }
 
+    /**
+     * Set the label for the shortcodes toolbar button.
+     */
+    public function shortcodesLabel(string $label): static
+    {
+        $this->shortcodesLabel = $label;
+        return $this;
+    }
+
     public function getShortcodes(): array
     {
         return $this->shortcodes;
+    }
+
+    public function getShortcodesLabel(): string
+    {
+        return $this->shortcodesLabel;
     }
 
     public function getShortcodesJson(): string

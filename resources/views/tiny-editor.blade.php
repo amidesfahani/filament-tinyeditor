@@ -105,10 +105,11 @@
                     @if ($getImagesUploadUrl !== false) images_upload_url: @js($getImagesUploadUrl()), @endif
                     image_advtab: @js($imageAdvtab()),
                     image_description: @js($getImageDescription()),
-                    image_class_list: @js($getImageClassList()),
+                    @if (is_array($getImageClassList())) image_class_list: @js($getImageClassList()), @endif
                     license_key: '{{ $getLicenseKey() }}',
                     custom_configs: {{ $getCustomConfigs() }},
                     shortcodes: @js($getShortcodes()),
+                    shortcodesLabel: @js($getShortcodesLabel()),
                     uploadingMessage: '{{ $getUploadingMessage() ?: 'Uploading image...' }}',
                     key: '{{ $getKey() }}'
                 })"

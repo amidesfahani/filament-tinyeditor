@@ -71,6 +71,7 @@ export default function tinyeditor({
 	convert_urls = true,
 	custom_configs = {},
 	shortcodes = [],
+	shortcodesLabel = 'Shortcodes',
 	setup = null,
 	disabled = false,
 	locale = "en",
@@ -84,6 +85,7 @@ export default function tinyeditor({
 	// Store shortcodes globally for the shortcodes plugin to access
 	if (shortcodes && shortcodes.length > 0) {
 		window.tinyMceShortcodes = shortcodes;
+		window.tinyMceShortcodesLabel = shortcodesLabel;
 	}
 
 	let editors = window.filamentTinyEditors || {};
@@ -367,9 +369,17 @@ export default function tinyeditor({
 				images_upload_base_path: images_upload_base_path,
 				license_key: license_key,
 
+				// Custom options for shortcodes plugin (must be in init config, not setup)
+				shortcodes_data: shortcodes,
+				shortcodes_label: shortcodesLabel,
+
 				...custom_configs,
 
 				setup: function (editor) {
+					// Register custom options so they can be accessed via editor.options.get()
+					editor.options.register('shortcodes_data', { processor: 'object[]', default: [] });
+					editor.options.register('shortcodes_label', { processor: 'string', default: 'Shortcodes' });
+
 					if (!window.tinySettingsCopy) {
 						window.tinySettingsCopy = [];
 					}

@@ -1,7 +1,8 @@
 // TinyMCE Shortcodes Plugin
 tinymce.PluginManager.add('shortcodes', function(editor) {
-    // Get shortcodes from global variable (set by tinyeditor component)
-    var shortcodes = window.tinyMceShortcodes || [];
+    // Get shortcodes from TinyMCE init config (using getParam for unregistered options)
+    var shortcodes = editor.getParam('shortcodes_data', []);
+    var shortcodesLabel = editor.getParam('shortcodes_label', 'Shortcodes');
 
     if (!shortcodes || shortcodes.length === 0) {
         console.warn('TinyMCE Shortcodes: No shortcodes configured');
@@ -68,9 +69,9 @@ tinymce.PluginManager.add('shortcodes', function(editor) {
 
     // Register the menu button
     editor.ui.registry.addMenuButton('shortcodes', {
-        text: 'Shortcodes',
+        text: shortcodesLabel,
         icon: 'bookmark',
-        tooltip: 'Insert shortcode',
+        tooltip: shortcodesLabel,
         fetch: function(callback) {
             var items = shortcodes.map(function(shortcode) {
                 return {
