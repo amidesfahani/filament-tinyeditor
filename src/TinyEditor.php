@@ -655,10 +655,8 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained
     {
         $plugins = config('filament-tinyeditor.profiles.' . $this->profile . '.external_plugins', []);
 
-        // Add shortcodes plugin if enabled
-        if (!empty($this->shortcodes)) {
-            $plugins['shortcodes'] = asset('js/amidesfahani/filament-tinyeditor/shortcodes.js') . '?v=' . time();
-        }
+        // Note: shortcodes plugin is now registered inline in tinymce.js setup callback
+        // External plugins cannot access TinyMCE init config at load time
 
         if (!empty($plugins)) {
             return str_replace('"', "'", json_encode($plugins));
