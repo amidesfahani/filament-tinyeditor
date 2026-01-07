@@ -39,12 +39,7 @@
         $textareaID = 'tiny-editor-' . str_replace(['.', '#', '$'], '-', $getId()) . '-' . rand();
     @endphp
 
-    <div
-        x-data="{ isModalOpen: false }"
-        x-init="$el.closest('.fi-modal')?.addEventListener('open-tinyeditor-modal', () => { isModalOpen = true; });
-                $el.closest('.fi-modal')?.addEventListener('close-tinyeditor-modal', () => { isModalOpen = false; });
-                $watch('isModalOpen', value => { $dispatch('modal-visibility-changed', { isOpen: value }); });"
-    >
+    <div>
         <x-filament::input.wrapper
             x-cloak
             :valid="!$errors->has($statePath)"
