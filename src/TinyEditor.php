@@ -64,6 +64,7 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained
     protected bool $imageDescription = true;
     protected bool|string $resize = false;
     protected bool $textPattern = true;
+    protected array $shortcodes = [];
 
     protected string $tiny;
     protected string $languageVersion;
@@ -174,6 +175,11 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained
 
         if (config('filament-tinyeditor.profiles.' . $this->profile . '.toolbar')) {
             $toolbar = config('filament-tinyeditor.profiles.' . $this->profile . '.toolbar');
+        }
+
+        // Prepend shortcodes button if shortcodes are enabled
+        if (!empty($this->shortcodes) && !str_contains($toolbar, 'shortcodes')) {
+            $toolbar = 'shortcodes | ' . $toolbar;
         }
 
         return $toolbar;
@@ -646,8 +652,15 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained
 
     public function getExternalPlugins(): string
     {
-        if (config('filament-tinyeditor.profiles.' . $this->profile . '.external_plugins')) {
-            return str_replace('"', "'", json_encode(config('filament-tinyeditor.profiles.' . $this->profile . '.external_plugins')));
+        $plugins = config('filament-tinyeditor.profiles.' . $this->profile . '.external_plugins', []);
+
+        // Add shortcodes plugin if enabled
+        if (!empty($this->shortcodes)) {
+            $plugins['shortcodes'] = asset('js/amidesfahani/filament-tinyeditor/shortcodes.js');
+        }
+
+        if (!empty($plugins)) {
+            return str_replace('"', "'", json_encode($plugins));
         }
 
         return '{}';
@@ -774,6 +787,30 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained
     {
         $this->textPattern = $textPattern;
         return $this;
+    }
+
+    /**
+     * Enable shortcodes plugin with the specified shortcodes array.
+     *
+     * @param array $shortcodes Array of shortcodes: [['text' => 'Label', 'value' => 'code'], ...]
+     */
+    public function shortcodes(array $shortcodes): static
+    {
+        $this->shortcodes = $shortcodes;
+        return $this;
+    }
+
+    public function getShortcodes(): array
+    {
+        return $this->shortcodes;
+    }
+
+    public function getShortcodesJson(): string
+    {
+        if (empty($this->shortcodes)) {
+            return '[]';
+        }
+        return json_encode($this->shortcodes, JSON_UNESCAPED_UNICODE);
     }
 
     public function fileAttachmentProvider(?FileAttachmentProvider $provider): static

@@ -113,6 +113,7 @@
                     image_class_list: @js($getImageClassList()),
                     license_key: '{{ $getLicenseKey() }}',
                     custom_configs: {{ $getCustomConfigs() }},
+                    shortcodes: {!! $getShortcodesJson() !!},
                     uploadingMessage: '{{ $getUploadingMessage() ?: 'Uploading image...' }}',
                     key: '{{ $getKey() }}',
                     setup: (editor) => {

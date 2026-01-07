@@ -27,6 +27,11 @@ class TinyeditorServiceProvider extends PackageServiceProvider
         else if (file_exists(base_path('vendor/tinymce/tinymce'))) {
             $this->publishes([base_path('vendor/tinymce/tinymce') => public_path('vendor/tinymce')], 'public');
         }
+
+        // Publish shortcodes plugin
+        $this->publishes([
+            __DIR__ . '/../resources/js/shortcodes.js' => public_path('js/amidesfahani/filament-tinyeditor/shortcodes.js'),
+        ], ['public', 'filament-tinyeditor-shortcodes']);
     }
 
     public function packageRegistered(): void {}

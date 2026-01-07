@@ -70,6 +70,7 @@ export default function tinyeditor({
 	remove_script_host = true,
 	convert_urls = true,
 	custom_configs = {},
+	shortcodes = [],
 	setup = null,
 	disabled = false,
 	locale = "en",
@@ -79,6 +80,11 @@ export default function tinyeditor({
 	uploadingMessage = "Uploading image...",
 	key,
 }) {
+
+	// Store shortcodes globally for the shortcodes plugin to access
+	if (shortcodes && shortcodes.length > 0) {
+		window.tinyMceShortcodes = shortcodes;
+	}
 
 	let editors = window.filamentTinyEditors || {};
 
