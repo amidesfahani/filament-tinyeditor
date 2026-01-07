@@ -116,11 +116,6 @@
                     shortcodes: {!! $getShortcodesJson() !!},
                     uploadingMessage: '{{ $getUploadingMessage() ?: 'Uploading image...' }}',
                     key: '{{ $getKey() }}',
-                    setup: (editor) => {
-                        editor.on('blur change keyup', () => {
-                            $wire.set('{{ $statePath }}', editor.getContent(), false);
-                        })
-                    },
                 })"
                 wire:ignore
                 wire:key="{{ $livewireKey }}.{{ substr(md5(serialize([$isDisabled])), 0, 64) }}"
