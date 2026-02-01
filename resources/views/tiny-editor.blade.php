@@ -39,12 +39,7 @@
         $textareaID = 'tiny-editor-' . str_replace(['.', '#', '$'], '-', $getId()) . '-' . rand();
     @endphp
 
-    <div
-        x-data="{ isModalOpen: false }"
-        x-init="$el.closest('.fi-modal')?.addEventListener('open-tinyeditor-modal', () => { isModalOpen = true; });
-                $el.closest('.fi-modal')?.addEventListener('close-tinyeditor-modal', () => { isModalOpen = false; });
-                $watch('isModalOpen', value => { $dispatch('modal-visibility-changed', { isOpen: value }); });"
-    >
+    <div>
         <x-filament::input.wrapper
             x-cloak
             :valid="!$errors->has($statePath)"
@@ -110,16 +105,13 @@
                     @if ($getImagesUploadUrl !== false) images_upload_url: @js($getImagesUploadUrl()), @endif
                     image_advtab: @js($imageAdvtab()),
                     image_description: @js($getImageDescription()),
-                    image_class_list: @js($getImageClassList()),
+                    @if (is_array($getImageClassList())) image_class_list: @js($getImageClassList()), @endif
                     license_key: '{{ $getLicenseKey() }}',
                     custom_configs: {{ $getCustomConfigs() }},
+                    shortcodes: @js($getShortcodes()),
+                    shortcodesLabel: @js($getShortcodesLabel()),
                     uploadingMessage: '{{ $getUploadingMessage() ?: 'Uploading image...' }}',
-                    key: '{{ $getKey() }}',
-                    setup: (editor) => {
-                        editor.on('blur change keyup', () => {
-                            $wire.set('{{ $statePath }}', editor.getContent(), false);
-                        })
-                    },
+                    key: '{{ $getKey() }}'
                 })"
                 wire:ignore
                 wire:key="{{ $livewireKey }}.{{ substr(md5(serialize([$isDisabled])), 0, 64) }}"

@@ -70,6 +70,8 @@ export default function tinyeditor({
 	remove_script_host = true,
 	convert_urls = true,
 	custom_configs = {},
+	shortcodes = [],
+	shortcodesLabel = 'Shortcodes',
 	setup = null,
 	disabled = false,
 	locale = "en",
@@ -79,6 +81,12 @@ export default function tinyeditor({
 	uploadingMessage = "Uploading image...",
 	key,
 }) {
+
+	// Store shortcodes globally for the shortcodes plugin to access
+	if (shortcodes && shortcodes.length > 0) {
+		window.tinyMceShortcodes = shortcodes;
+		window.tinyMceShortcodesLabel = shortcodesLabel;
+	}
 
 	let editors = window.filamentTinyEditors || {};
 
@@ -361,9 +369,69 @@ export default function tinyeditor({
 				images_upload_base_path: images_upload_base_path,
 				license_key: license_key,
 
+				// Add shortcodes CSS via content_style (more efficient than JS injection)
+				content_style: shortcodes && shortcodes.length > 0 ?
+					'.shortcode-tag { display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 2px 8px; border-radius: 12px; font-size: 12px; font-weight: 500; margin: 0 2px; cursor: default; user-select: none; -webkit-user-select: none; vertical-align: baseline; }' : '',
+
 				...custom_configs,
 
 				setup: function (editor) {
+					// Register shortcodes plugin inline (external plugin can't access init config)
+					if (shortcodes && shortcodes.length > 0) {
+						// Build lookup map for converting shortcodes to labels
+						var shortcodeMap = {};
+						shortcodes.forEach(function(s) {
+							shortcodeMap[s.value] = s.text;
+						});
+
+						// Create shortcode tag HTML
+						function createShortcodeTag(value, text) {
+							return '<span class="shortcode-tag" data-shortcode="' + value + '" contenteditable="false">' + text + '</span>';
+						}
+
+						// Convert {shortcode} or {{ shortcode }} to visual tags when content is set
+						editor.on('BeforeSetContent', function(e) {
+							if (e.content) {
+								// Match both single {code} and double {{ code }} braces
+								e.content = e.content.replace(/\{+\s*(\w+)\s*\}+/g, function(match, code) {
+									var label = shortcodeMap[code];
+									if (label) {
+										return createShortcodeTag(code, label);
+									}
+									return match;
+								});
+							}
+						});
+
+						// Convert visual tags back to {{ shortcode }} when getting content
+						editor.on('GetContent', function(e) {
+							if (e.content) {
+								e.content = e.content.replace(/<span[^>]*class="shortcode-tag"[^>]*data-shortcode="(\w+)"[^>]*>[^<]*<\/span>/gi, function(match, code) {
+									return '{{ ' + code + ' }}';
+								});
+							}
+						});
+
+						// Register the menu button
+						editor.ui.registry.addMenuButton('shortcodes', {
+							text: shortcodesLabel,
+							icon: 'bookmark',
+							tooltip: shortcodesLabel,
+							fetch: function(callback) {
+								var items = shortcodes.map(function(shortcode) {
+									return {
+										type: 'menuitem',
+										text: shortcode.text,
+										onAction: function() {
+											editor.insertContent(createShortcodeTag(shortcode.value, shortcode.text));
+										}
+									};
+								});
+								callback(items);
+							}
+						});
+					}
+
 					if (!window.tinySettingsCopy) {
 						window.tinySettingsCopy = [];
 					}
