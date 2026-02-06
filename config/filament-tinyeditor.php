@@ -68,6 +68,7 @@ return [
         'toolbar' => [
             // 'fontsize' => '10px 12px 13px 14px 16px 18px 20px',
             // 'fontfamily' => 'Tahoma=tahoma,arial,helvetica,sans-serif;',
+            // 'content_style' => 'body { font-family: "Tahoma", sans-serif; }',
         ]
     ]
 ];
