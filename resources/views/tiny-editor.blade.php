@@ -63,6 +63,7 @@
                     plugins: '{{ $getPlugins() }}',
                     external_plugins: {{ $getExternalPlugins() }},
                     toolbar: '{{ $getToolbar() }}',
+                    content_style: '{{ $contentStyle() }}',
                     @if (!$getTextPattern()) text_patterns: @js($getTextPattern()), @endif
                     language: '{{ $getInterfaceLanguage() }}',
                     language_url: '{{ $getLanguageURL($getInterfaceLanguage()) }}',

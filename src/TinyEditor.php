@@ -64,6 +64,7 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained
     protected bool $imageDescription = true;
     protected bool|string $resize = false;
     protected bool $textPattern = true;
+    protected string $contentStyle = '';
 
     protected string $tiny;
     protected string $languageVersion;
@@ -82,6 +83,7 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained
         $this->darkMode = config('filament-tinyeditor.darkMode', 'auto');
         $this->skinsUI = config('filament-tinyeditor.skins.ui', 'oxide');
         $this->skinsContent = config('filament-tinyeditor.skins.content', 'default');
+        $this->contentStyle = config('filament-tinyeditor.extra.content_style', '');
 
         $this->beforeStateDehydrated(function (TinyEditor $component, ?string $rawState, ?Model $record) {
             $fileAttachmentProvider = $this->getFileAttachmentProvider();
@@ -416,6 +418,11 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained
     public function getWidth(): int
     {
         return $this->width;
+    }
+
+    public function contentStyle(): string
+    {
+        return $this->contentStyle;
     }
 
     public function width(int $width): static
