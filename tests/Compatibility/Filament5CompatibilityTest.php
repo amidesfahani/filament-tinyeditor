@@ -26,11 +26,11 @@ use Visualbuilder\FilamentTinyEditor\TinyEditor;
  * @see FILAMENT5_COMPATIBILITY_REPORT.md for detailed analysis
  */
 
-it('is currently running on Filament 4.x', function () {
-    // Verify we're on Filament 4
+it('is now running on Filament 5.x', function () {
+    // Verify we successfully upgraded to Filament 5
     $filamentVersion = InstalledVersions::getVersion('filament/filament');
 
-    expect($filamentVersion)->toMatch('/^(v?4|dev-)/');
+    expect($filamentVersion)->toMatch('/^(v?5|dev-)/');
 })->group('compatibility', 'filament5');
 
 it('does NOT use Schemas namespace (Filament 4 specific feature)', function () {
@@ -264,7 +264,10 @@ it('documents no breaking changes expected for Filament 5', function () {
 
     // Calculate maximum estimated fix time
     $maxFixTime = array_sum(array_map(
-        fn($change) => (int) explode('-', $change['estimated_fix_time'])[1],
+        function($change) {
+            $parts = explode('-', $change['estimated_fix_time']);
+            return (int) ($parts[1] ?? $parts[0]); // Handle both "X-Y hours" and "X hours"
+        },
         $expectedBreakingChanges
     ));
 
