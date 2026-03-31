@@ -16,7 +16,11 @@ A [TineMce](https://www.tiny.cloud/) integration for [Filament](https://filament
 Install the package via composer
 
 ```bash
-composer require visualbuilder/filament-tinyeditor
+# For Filament 5.x
+composer require visualbuilder/filament-tinyeditor:^5.0
+
+# For Filament 4.x
+composer require visualbuilder/filament-tinyeditor:^4.0
 ```
 
 Publish assets
