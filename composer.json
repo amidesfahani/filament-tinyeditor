@@ -2,7 +2,12 @@
     "name": "visualbuilder/filament-tinyeditor",
     "description": "Filament TinyMce Editor v6",
     "license": "MIT",
-    "keywords": ["laravel", "filament", "tinyeditor", "tinymce"],
+    "keywords": [
+        "laravel",
+        "filament",
+        "tinyeditor",
+        "tinymce"
+    ],
     "authors": [
         {
             "name": "Amid Esfahani",
@@ -30,6 +35,9 @@
             "providers": [
                 "Visualbuilder\\FilamentTinyEditor\\TinyeditorServiceProvider"
             ]
+        },
+        "branch-alias": {
+            "5.x-dev": "5.0.x-dev"
         }
     },
     "minimum-stability": "dev",
