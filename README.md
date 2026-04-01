@@ -8,8 +8,8 @@ A [TineMce](https://www.tiny.cloud/) integration for [Filament](https://filament
 
 | Package Version | Filament | Livewire | Laravel | PHP | TinyMCE |
 |-----------------|----------|----------|---------|-----|---------|
-| 5.x             | 5.x      | 4.x      | 11.x, 12.x, 13.x | 8.2+ | 7.x |
-| 4.x             | 4.x      | 3.x      | 11.x    | 8.2+ | 7.x |
+| 5.x | 5.x | 4.x | 11.x, 12.x | 8.2+ | 7.x |
+| 4.x | 4.x | 3.x | 10.x, 11.x | 8.2+ | 7.x |
 
 ## Installation
 
