@@ -482,18 +482,18 @@ export default function tinyeditor({
 										// Dispatch form processing finished event
 										dispatchFormEvent(this.editor(), 'form-processing-finished');
 										this.isUploadingFile = false;
-										success(tempUrl);
 
 										const editor = this.editor();
 
-										editor.once('SetContent', ({ content, format, paster, selection }) => {
+										editor.once('NodeChange', () => {
 											const imgs = editor.getBody().querySelectorAll('img:not([data-id])');
 											if (imgs.length > 0) {
-												// Tag the last inserted <img>
-												const img = imgs[imgs.length - 1];
-												img.setAttribute('data-id', fileKey);
+												imgs[imgs.length - 1].setAttribute('data-id', fileKey);
 											}
 										});
+
+										success(tempUrl);
+
 									})
 									.catch((error) => {
 										console.error('Upload error:', error);

@@ -85,28 +85,27 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained
         $this->skinsContent = config('filament-tinyeditor.skins.content', 'default');
         $this->contentStyle = config('filament-tinyeditor.extra.content_style', '');
 
-        $this->beforeStateDehydrated(function (TinyEditor $component, ?string $rawState, ?Model $record) {
-            $fileAttachmentProvider = $this->getFileAttachmentProvider();
-            
+        $this->dehydrateStateUsing(function (?string $state, TinyEditor $component) {
+            if (! $state) {
+                return $state;
+            }
+
+            $fileAttachmentProvider = $component->getFileAttachmentProvider();
+
             $tempDiskName = config('livewire.temporary_file_upload.disk', config('filament-tinyeditor.temporary_file_upload_disk', 'local'));
             $tempDisk = Storage::disk($tempDiskName);
-            
+
             $fileAttachmentIds = [];
             $updated = false;
 
-            if (!$rawState) {
-                return;
-            }
-
-            // Parse HTML to find images
-            $doc = new \DOMDocument();
-            @$doc->loadHTML('<?xml encoding="utf-8" ?>' . $rawState); // Ensure proper encoding
+            $doc = new \DOMDocument;
+            @$doc->loadHTML('<?xml encoding="utf-8" ?>' . $state);
             $images = $doc->getElementsByTagName('img');
 
             foreach ($images as $image) {
                 $src = $image->getAttribute('src');
-                $fileKey = $image->getAttribute('data-id'); // Use data-id for fileKey
-                $filename = basename(parse_url($src, PHP_URL_PATH));
+                $fileKey = $image->getAttribute('data-id');
+                $filename = urldecode(basename(parse_url($src, PHP_URL_PATH)));
 
                 if (!$src || !$fileKey || !$filename) {
                     continue;
@@ -116,7 +115,7 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained
 
                 // Check if the src is a temporary URL
                 if ($tempDisk->exists($tempPath)) {
-                    $attachment = $this->getUploadedFileAttachment($fileKey);
+                    $attachment = $component->getUploadedFileAttachment($fileKey);
 
                     if ($attachment) {
                         $nodeAttrsId = $component->saveUploadedFileAttachment($attachment);
@@ -127,14 +126,14 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained
                         $image->setAttribute('data-id', $nodeAttrsId);
 
                         $updated = true;
-
-                        $fileAttachmentIds[] = $fileKey;
+                        $fileAttachmentIds[] = $nodeAttrsId;
 
                         continue;
                     }
 
                     if (filled($component->getFileAttachmentUrl($fileKey))) {
                         $fileAttachmentIds[] = $fileKey;
+
                         continue;
                     }
                 }
@@ -147,12 +146,14 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained
                 foreach ($body->childNodes as $node) {
                     $newState .= $doc->saveHTML($node);
                 }
-                $component->state($newState);
+                $state = $newState;
             }
 
             // Clean up unused files
             $fileAttachmentProvider?->cleanUpFileAttachments(exceptIds: $fileAttachmentIds);
-        }, shouldUpdateValidatedStateAfter: true);
+
+            return $state;
+        });
     }
 
     public function openModal()
