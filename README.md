@@ -1,13 +1,12 @@
-# Filament TineMce Editor
+# Filament TinyMCE Editor
 
-A [TineMce](https://www.tiny.cloud/) integration for [Filament](https://filamentphp.com/) Admin/Forms.
-
-![tiny-editor](images/filament-tinyeditor.jpg?raw=true)
+A [TinyMCE](https://www.tiny.cloud/) integration for [Filament](https://filamentphp.com/) Admin/Forms.
 
 ## Version Compatibility
 
 | Package Version | Filament | Livewire | Laravel | PHP | TinyMCE |
 |-----------------|----------|----------|---------|-----|---------|
+| 6.x | 5.x | 4.x | 11.x, 12.x | 8.2+ | 8.x |
 | 5.x | 5.x | 4.x | 11.x, 12.x | 8.2+ | 7.x |
 | 4.x | 4.x | 3.x | 10.x, 11.x | 8.2+ | 7.x |
 
@@ -16,7 +15,10 @@ A [TineMce](https://www.tiny.cloud/) integration for [Filament](https://filament
 Install the package via composer
 
 ```bash
-# For Filament 5.x
+# For Filament 5.x + TinyMCE 8.x
+composer require visualbuilder/filament-tinyeditor:^6.0
+
+# For Filament 5.x + TinyMCE 7.x
 composer require visualbuilder/filament-tinyeditor:^5.0
 
 # For Filament 4.x
