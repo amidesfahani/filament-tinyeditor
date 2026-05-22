@@ -1,8 +1,15 @@
-# Filament TineMce Editor
+# Filament TinyMCE Editor
 
-A [TineMce](https://www.tiny.cloud/) integration for [Filament](https://filamentphp.com/) Admin/Forms.
+A [TinyMCE](https://www.tiny.cloud/) integration for [Filament](https://filamentphp.com/) Admin/Forms.
 
 ![tiny-editor](images/filament-tinyeditor.jpg?raw=true)
+
+## Version Compatibility
+
+| Package Version | Filament | Laravel | PHP |
+|-----------------|----------|---------|-----|
+| 4.x | 4.x | 11.x | 8.2+ |
+| 3.x | 3.x | 10.x+ | 8.1+ |
 
 ## Installation
 

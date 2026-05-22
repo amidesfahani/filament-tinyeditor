@@ -155,6 +155,14 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained
         }, shouldUpdateValidatedStateAfter: true);
     }
 
+    public function getId(): ?string
+    {
+        if (!isset($this->id)) {
+            $this->id = 'tiny_editor_' . str_replace('.', '_', uniqid('', true));
+        }
+        return parent::getId();
+    }
+
     public function openModal()
     {
         $this->isModalOpen = true;
