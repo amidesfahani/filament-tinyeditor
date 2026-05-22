@@ -30,11 +30,6 @@ const generateUUID = () => {
 };
 
 const normalizeContent = (content) => {
-
-	// log content
-	console.log('content', content);
-	console.log('typeof content', typeof content);
-
 	if (content == null) {
 		return "";
 	}
