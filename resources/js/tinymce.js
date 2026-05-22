@@ -29,6 +29,19 @@ const generateUUID = () => {
 	);
 };
 
+const normalizeContent = (content) => {
+
+	// log content
+	console.log('content', content);
+	console.log('typeof content', typeof content);
+
+	if (content == null) {
+		return "";
+	}
+
+	return typeof content === "string" ? content : "";
+};
+
 export default function tinyeditor({
 	activePanel,
 	state,
@@ -135,7 +148,7 @@ export default function tinyeditor({
 
 			if (!this.inline || this.isModalOpen) {
 				this.$nextTick(() => {
-					this.tryInitializeEditor(this.state || "");
+					this.tryInitializeEditor(normalizeContent(this.state));
 				});
 			}
 
@@ -159,7 +172,7 @@ export default function tinyeditor({
 				if (this.isUploadingFile) return;
 
 				if (value !== this.editor().getContent()) {
-					this.updateEditorContent(value || "");
+					this.updateEditorContent(value);
 					this.putCursorToEnd();
 				}
 			});
@@ -181,7 +194,7 @@ export default function tinyeditor({
 			// Listen for Filament modal events
 			this.$el.closest('.fi-modal')?.addEventListener('open-tinyeditor-modal', () => {
 				this.isModalOpen = true;
-				this.$nextTick(() => this.tryInitializeEditor(this.state || ""));
+				this.$nextTick(() => this.tryInitializeEditor(normalizeContent(this.state)));
 			});
 
 			this.$el.closest('.fi-modal')?.addEventListener('close-tinyeditor-modal', () => {
@@ -196,7 +209,7 @@ export default function tinyeditor({
 				if (open) {
 					this.$nextTick(() => {
 						this.delete();
-						this.tryInitializeEditor(this.state || "");
+						this.tryInitializeEditor(normalizeContent(this.state));
 					});
 				} else {
 					this.delete();
@@ -213,7 +226,7 @@ export default function tinyeditor({
 					// Check if the editor element still exists in DOM but editor is not initialized
 					const editorElement = document.querySelector(this.selector);
 					if (editorElement && !this.editor()) {
-						this.tryInitializeEditor(this.state || "");
+						this.tryInitializeEditor(normalizeContent(this.state));
 					}
 				});
 			};
@@ -232,7 +245,7 @@ export default function tinyeditor({
 					this.$nextTick(() => {
 						const editorElement = document.querySelector(this.selector);
 						if (editorElement && !this.editor()) {
-							this.tryInitializeEditor(this.state || "");
+							this.tryInitializeEditor(normalizeContent(this.state));
 						}
 					});
 				});
@@ -246,7 +259,7 @@ export default function tinyeditor({
 			// Ensure initialization after Livewire re-renders
 			window.addEventListener('livewire:navigated', () => {
 				if (this.isModalOpen) {
-					this.$nextTick(() => this.tryInitializeEditor(this.state || ""));
+					this.$nextTick(() => this.tryInitializeEditor(normalizeContent(this.state)));
 				}
 			});
 
@@ -393,7 +406,7 @@ export default function tinyeditor({
 					editor.on("init", function (e) {
 						editors[_this.statePath] = editor.id;
 						if (content != null) {
-							editor.setContent(content);
+							editor.setContent(normalizeContent(content));
 						}
 					});
 
@@ -585,7 +598,7 @@ export default function tinyeditor({
 			tinymce.init(tinyConfig);
 		},
 		updateEditorContent(content) {
-			this.editor().setContent(content);
+			this.editor().setContent(normalizeContent(content));
 		},
 		putCursorToEnd() {
 			this.editor().selection.select(this.editor().getBody(), true);
