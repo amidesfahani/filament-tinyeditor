@@ -8,6 +8,7 @@ A [TinyMCE](https://www.tiny.cloud/) integration for [Filament](https://filament
 
 | Package Version | Filament | Laravel | PHP |
 |-----------------|----------|---------|-----|
+| 5.x | 5.x | 12.x | 8.2+ |
 | 4.x | 4.x | 11.x | 8.2+ |
 | 3.x | 3.x | 10.x+ | 8.1+ |
 
@@ -16,7 +17,11 @@ A [TinyMCE](https://www.tiny.cloud/) integration for [Filament](https://filament
 Install the package via composer
 
 ```bash
-composer require amidesfahani/filament-tinyeditor
+# Filament 5.x
+composer require amidesfahani/filament-tinyeditor:^5.0
+
+# Filament 4.x
+composer require amidesfahani/filament-tinyeditor:^4.0
 ```
 
 Publish assets
