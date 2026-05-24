@@ -119,6 +119,14 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained
                     $attachment = $this->getUploadedFileAttachment($fileKey);
 
                     if ($attachment) {
+                        if (! str_starts_with($attachment->getMimeType(), 'image/')) {
+                            continue;
+                        }
+
+                        if (! getimagesize($attachment->getRealPath())) {
+                            continue;
+                        }
+
                         $nodeAttrsId = $component->saveUploadedFileAttachment($attachment);
                         $nodeAttrsSrc = $component->getFileAttachmentUrl($nodeAttrsId);
 
