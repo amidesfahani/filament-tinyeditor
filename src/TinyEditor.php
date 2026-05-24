@@ -128,16 +128,15 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained
                         }
 
                         // getRealPath() returns false for stream wrappers or missing
-                        // temp files.  Read the file contents instead and validate the
-                        // image data with getimagesizefromstring(), which is also free
-                        // of the PHP warnings that getimagesize() emits on bad input.
+                        // temp files. When a real local path is available, validate the
+                        // image directly from disk to avoid reading the entire upload
+                        // into memory first; suppress warnings on invalid image data.
                         $realPath = $attachment->getRealPath();
                         if (! is_string($realPath) || $realPath === '') {
                             continue;
                         }
 
-                        $fileContents = @file_get_contents($realPath);
-                        if ($fileContents === false || ! @getimagesizefromstring($fileContents)) {
+                        if (! @getimagesize($realPath)) {
                             continue;
                         }
 
