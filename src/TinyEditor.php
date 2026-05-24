@@ -119,11 +119,25 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained
                     $attachment = $this->getUploadedFileAttachment($fileKey);
 
                     if ($attachment) {
-                        if (! str_starts_with($attachment->getMimeType(), 'image/')) {
+                        // getMimeType() can return null when the MIME type cannot be
+                        // determined; normalise to an empty string to avoid a TypeError
+                        // in str_starts_with().
+                        $mimeType = $attachment->getMimeType() ?? '';
+                        if (! str_starts_with($mimeType, 'image/')) {
                             continue;
                         }
 
-                        if (! getimagesize($attachment->getRealPath())) {
+                        // getRealPath() returns false for stream wrappers or missing
+                        // temp files.  Read the file contents instead and validate the
+                        // image data with getimagesizefromstring(), which is also free
+                        // of the PHP warnings that getimagesize() emits on bad input.
+                        $realPath = $attachment->getRealPath();
+                        if (! is_string($realPath) || $realPath === '') {
+                            continue;
+                        }
+
+                        $fileContents = @file_get_contents($realPath);
+                        if ($fileContents === false || ! @getimagesizefromstring($fileContents)) {
                             continue;
                         }
 
@@ -185,7 +199,7 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained
 
     public function getToolbar(): string
     {
-        $toolbar = 'undo redo removeformat | styles | bold italic | rtl ltr | alignjustify alignright aligncenter alignleft | numlist bullist outdent indent accordion | forecolor backcolor | blockquote table toc hr | image link anchor media codesample emoticons | visualblocks print preview wordcount fullscreen help';
+        $toolbar = 'undo redo removeformat | styles | bold italic | rtl ltr | alignjustify alignright aligncenter alignleft | numlist bullist outdent indent accordion | forecolor backcolor | blockquote | link anchor codesample | image media | table | charmap emoticons hr | pagebreak nonbreaking | visualblocks visualchars | code wordcount | fullscreen preview print';
         if ($this->isSimple()) {
             $toolbar = 'removeformat | bold italic | rtl ltr | link emoticons';
         }
@@ -219,7 +233,7 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained
 
     public function getPlugins(): string
     {
-        $plugins = 'accordion autoresize codesample directionality advlist autolink link image lists charmap preview anchor pagebreak searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media table emoticons help';
+        $plugins = 'accordion autoresize codesample directionality advlist autolink link image lists charmap preview anchor pagebreak searchreplace wordcount visualblocks visualchars code fullscreen media table emoticons hr nonbreaking';
 
         if ($this->isSimple()) {
             $plugins = 'autoresize directionality emoticons link wordcount';
