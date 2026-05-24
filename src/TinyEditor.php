@@ -199,7 +199,7 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained
 
     public function getToolbar(): string
     {
-        $toolbar = 'undo redo removeformat | styles | bold italic | rtl ltr | alignjustify alignright aligncenter alignleft | numlist bullist outdent indent accordion | forecolor backcolor | blockquote | link anchor codesample | image media | table | charmap emoticons hr | pagebreak nonbreaking | visualblocks visualchars | code wordcount | fullscreen preview print';
+        $toolbar = 'undo redo removeformat | styles | bold italic | rtl ltr | alignjustify alignright aligncenter alignleft | numlist bullist outdent indent accordion | forecolor backcolor | blockquote table toc hr | image link anchor media codesample emoticons | visualblocks print preview wordcount fullscreen help';
         if ($this->isSimple()) {
             $toolbar = 'removeformat | bold italic | rtl ltr | link emoticons';
         }
@@ -233,7 +233,7 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained
 
     public function getPlugins(): string
     {
-        $plugins = 'accordion autoresize codesample directionality advlist autolink link image lists charmap preview anchor pagebreak searchreplace wordcount visualblocks visualchars code fullscreen media table emoticons hr nonbreaking';
+        $plugins = 'accordion autoresize codesample directionality advlist autolink link image lists charmap preview anchor pagebreak searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media table emoticons help';
 
         if ($this->isSimple()) {
             $plugins = 'autoresize directionality emoticons link wordcount';
