@@ -51,6 +51,7 @@
             :attributes="\Filament\Support\prepare_inherited_attributes($extraAttributeBag)"
         >
             <div
+                wire:ignore
                 x-load
                 x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('tinyeditor', 'amidesfahani/filament-tinyeditor') }}"
                 x-load-css="[@js(\Filament\Support\Facades\FilamentAsset::getStyleHref('tiny-css', package: 'amidesfahani/filament-tinyeditor'))]"

@@ -60,7 +60,7 @@ class TinyeditorServiceProvider extends PackageServiceProvider
         }
 
         if ($provider == 'vendor') {
-            $mainJs = asset('vendor/tinymce/tinymce.min.js');
+            $mainJs = secure_asset('vendor/tinymce/tinymce.min.js');
         }
 
         FilamentAsset::register([
