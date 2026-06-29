@@ -119,6 +119,27 @@ class TinyEditor extends Field implements Contracts\CanBeLengthConstrained
                     $attachment = $this->getUploadedFileAttachment($fileKey);
 
                     if ($attachment) {
+                        // getMimeType() can return null when the MIME type cannot be
+                        // determined; normalise to an empty string to avoid a TypeError
+                        // in str_starts_with().
+                        $mimeType = $attachment->getMimeType() ?? '';
+                        if (! str_starts_with($mimeType, 'image/')) {
+                            continue;
+                        }
+
+                        // getRealPath() returns false for stream wrappers or missing
+                        // temp files. When a real local path is available, validate the
+                        // image directly from disk to avoid reading the entire upload
+                        // into memory first; suppress warnings on invalid image data.
+                        $realPath = $attachment->getRealPath();
+                        if (! is_string($realPath) || $realPath === '') {
+                            continue;
+                        }
+
+                        if (! @getimagesize($realPath)) {
+                            continue;
+                        }
+
                         $nodeAttrsId = $component->saveUploadedFileAttachment($attachment);
                         $nodeAttrsSrc = $component->getFileAttachmentUrl($nodeAttrsId);
 
